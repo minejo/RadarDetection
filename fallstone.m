@@ -64,8 +64,3 @@ for i=1:length(t)
 end
 %轨迹处理
 end
-
-%根据初始值，初始速度，加速度获取实时值
-function real = getrealdistance(R0,v0,a,t)
-real = R0 + v0.*t + 0.5*a.*t.^2;
-end
