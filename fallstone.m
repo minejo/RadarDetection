@@ -3,8 +3,8 @@ function fallstone(T,f0,B,deltaR, deltaV)
 c=3e8;
 %%%%%%%%%确定分辨率%%%%%%%%%%%%%%
 Rmax=300; %最大处理距离
-Fs=2*B*Rmax/(T*c); %差频信号采样率
-N=fix(Rmax/deltaR); %距离维采样点数
+Fs=4*B*Rmax/(T*c); %差频信号采样率
+N=Fs*T; %距离维采样点数
 M=fix(c/(deltaV*2*T*f0)); %速度维采样点数
 Vmax=M*deltaV;  %最大不模糊距离
 %%%%%%%%%%设置参数%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,8 +19,8 @@ map=ones(fix(Rmax/0.1), 180)*(-1); %map图距离维最小单元为0.1m，角度维最小距离为1
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %   物体运动模型设置     %
 R0=70; %初始距离
-v0=-5; %初始速度,接近雷达方向为正
-a=-1; %加速度
+v0=-2; %初始速度,接近雷达方向为正
+a=-3; %加速度
 
 sita0=50;%初始角度
 sita_a=1;%角度变化加速度
@@ -40,7 +40,7 @@ search_sita=30;
 for i=1:length(t)
     %实时更新map
     [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));
-    %获得回波信号
+    %获得回波差频信号
     response=getresponse(map,0.1,angle,search_sita,M,T,Fs,B,f0);
     if response
         %添加噪声与杂波
