@@ -18,6 +18,7 @@ end
 % x_distance=(linspace(0,fs*(N-1)/N,N));
 % y_velocity=linspace(0, 1/T*(M-1)/M, M);
 % meshx=x_distance(1:N/2)*c/(2*B/T);
+% figure;
 % mesh(meshx,c*y_velocity/(2*f0),(abs(fft2(:,1:N/2))));
 % title('²îÆµÐÅºÅ¶þÎ¬ÆµÆ×·ÂÕæÍ¼');
 % xlabel('distance/m');
@@ -47,4 +48,12 @@ end
 % set(get(gca,'YLabel'),'FontSize',figure_FontSize,'Vertical','middle');
 % set(findobj('FontSize',10),'FontSize',figure_FontSize);
 % set(findobj(get(gca,'Children'),'LineWidth',0.5),'LineWidth',2);
+
+% figure;
+% test=abs((fft1(1,:)));
+% plot(linspace(0,fs,N)*c/(2*B/T),test);
+% title('¸´ÔÓ»Ø²¨ÐÅºÅµÄÒ»Î¬ÆµÆ×·ÂÕæÍ¼');
+% xlabel('¾àÀë/m');
+% ylabel('·ù¶È');
+% grid on;axis tight;
 end

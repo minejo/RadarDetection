@@ -20,7 +20,7 @@ end
 if type == 2
    % roadrailparal(T,N,f0,B,deltaR);
 end
-
+ 
 %铁道隧道或沿线口崩塌落石场景
 if type == 3
     fallstone(T,f0,B,deltaR,deltaV);    

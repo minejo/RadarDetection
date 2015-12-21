@@ -15,5 +15,3 @@ for i=1:distance
         end
     end
 end
-
-%加上干扰杂波，待定

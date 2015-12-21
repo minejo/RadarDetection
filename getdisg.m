@@ -2,7 +2,7 @@ function dsig = getdisg( R0,v0,B,f0,T,fs,M)
 %得到单个物体的差频信号
 
 c=3e8;
-A=1; %发射信号幅度
+A=20; %发射信号幅度
 
 t=0:1/fs:T-1/fs; %采样时间维
 u=B/T;

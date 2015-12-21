@@ -4,7 +4,7 @@ c=3e8;
 %%%%%%%%%确定分辨率%%%%%%%%%%%%%%
 Rmax=300; %最大处理距离
 Fs=4*B*Rmax/(T*c); %差频信号采样率
-N=Fs*T; %距离维采样点数
+N=round(Fs*T); %距离维采样点数
 M=fix(c/(deltaV*2*T*f0)); %速度维采样点数
 Vmax=M*deltaV;  %最大不模糊距离
 %%%%%%%%%%设置参数%%%%%%%%%%%%%%%%%%%%%%%
@@ -12,14 +12,14 @@ angle=3; %方位向波束角度
 T1=M*T; %单波束驻留时间
 scan_angle=30:angle:150; %波束扫描角度范围
 TT=T1*length(scan_angle); %扫描覆盖区域一周期时间
-t=0:T1:15*TT; %设置扫描时间为10周期
+t=0:T1:25*TT; %设置扫描时间为10周期
 
 %%%%%%%%%%%%%%%初始化map图%%%%%%%%%%%%%%%%%
 map=ones(fix(Rmax/0.1), 180)*(-1); %map图距离维最小单元为0.1m，角度维最小距离为1度
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %   物体运动模型设置     %
 R0=70; %初始距离
-v0=-2; %初始速度,接近雷达方向为正
+v0=-4; %初始速度,接近雷达方向为正
 a=-3; %加速度
 
 sita0=50;%初始角度
@@ -29,9 +29,16 @@ sita_v0=1;%角度变化初始速度
 v=v0+a.*t;
 R=R0-(v0.*t + 0.5*a.*t.^2);
 sita=sita0 + sita_v0.*t + 0.5*sita_a.*t.^2;
+
+%      静止物体         %
+R1=72;sita1=50;
+%R2=80;sita2=50;
 %                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 map(fix(R0/0.1), sita0)=abs(v0);
+map(fix(R1/0.1), sita1)=0;
+%map(fix(R2/0.1), sita2)=0;
+
 R_pre=fix(R0/0.1); %map更新时对应的上一时刻的值
 sita_pre=sita0;
 
@@ -47,7 +54,14 @@ for i=1:length(t)
         %添加噪声与杂波
         SNR=1; %热噪声信噪比
         response = awgn(response, SNR);
-        %todo 杂波
+        %添加杂波信号
+        za=zeros(M,N);
+%         Z=terrain; %生成地形数据矩阵
+%         hangza=zabo(B,f0,fs,T,B/T,3,Rmax,Z);
+        for k=1:M
+            za(k,:)=wbfb(1.5,2.2);
+        end
+        response = response + za;
         
         %%%%%%%%%%对差频信号进行二维fft变换%%%%%%%%%
         data = after2fft(response, N, Fs, T, B, f0); %二维变换后的矩阵
