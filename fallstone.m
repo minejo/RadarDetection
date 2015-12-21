@@ -69,6 +69,14 @@ for i=1:length(t)
         
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
         hasObject = cfarhandled(data,search_sita,deltaR);
+        x_distance=(linspace(0,Fs*(N-1)/N,N));
+        y_velocity=linspace(0, 1/T*(M-1)/M, M);
+        meshx=x_distance(1:N/2)*c/(2*B/T);
+        figure;
+        mesh(meshx,c*y_velocity/(2*f0),hasObject);
+        title('恒虚警检测结果');
+        xlabel('distance/m');
+        ylabel('velocity/(m/s)');
     end
     %%%%%%%%波束方位角%%%%%%%%%%
     disp('当前波束扫描角度为：');

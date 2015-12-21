@@ -60,6 +60,7 @@ for i=1:M
             isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
         end
         hasObject(i,j) = hasObject1*hasObject2*isTop;
+        
         if hasObject(i,j) == 1
             polar(search_sita/180*pi, j*deltaR, '*r');
             hold on;
