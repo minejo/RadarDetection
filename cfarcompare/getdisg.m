@@ -15,7 +15,7 @@ fw=2*u.*Rn/c;
 %phase0 初始相位
 phase0=2*pi*f0*2*R0/c;
 %采样点数
-fa_num=size(t,2);
+fa_num=fs*T;
 freq=zeros(M,fa_num);
 
 %差频频率
