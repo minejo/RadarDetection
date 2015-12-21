@@ -22,4 +22,29 @@ end
 % title('差频信号二维频谱仿真图');
 % xlabel('distance/m');
 % ylabel('velocity/(m/s)');
+% figure;
+% subplot(211)
+% test=abs((fft1(1,:)));
+% plot(linspace(0,fs,N)*c/(2*B/T),test);
+% title('理想回波信号的一维频谱仿真图');
+% xlabel('距离/m');
+% ylabel('幅度');
+% grid on;axis tight;
+% 
+% subplot(212)
+% plot(1:M,real(fft1(:,234)));
+% hold
+% plot(1:M,imag(fft1(:,234)),'r--');
+% title('一维处理结果的相位调制图');
+% xlabel('积累周期k');
+% ylabel('相位角度');
+% legend('实部','虚部');
+%figure resize
+% set(gcf,'Position',[100 100 260 220]);
+% set(gca,'Position',[.13 .17 .80 .74]);  %调整 XLABLE和YLABLE不会被切掉
+% figure_FontSize=8;
+% set(get(gca,'XLabel'),'FontSize',figure_FontSize,'Vertical','top');
+% set(get(gca,'YLabel'),'FontSize',figure_FontSize,'Vertical','middle');
+% set(findobj('FontSize',10),'FontSize',figure_FontSize);
+% set(findobj(get(gca,'Children'),'LineWidth',0.5),'LineWidth',2);
 end

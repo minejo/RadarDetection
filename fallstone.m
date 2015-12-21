@@ -42,6 +42,7 @@ for i=1:length(t)
     [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));
     %获得回波差频信号
     response=getresponse(map,0.1,angle,search_sita,M,T,Fs,B,f0);
+    
     if response
         %添加噪声与杂波
         SNR=1; %热噪声信噪比
