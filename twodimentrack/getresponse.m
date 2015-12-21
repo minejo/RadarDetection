@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 function response = getresponse( map,map_x,map_y,angle,M,T,fs,B,f0)
 %根据二维map数组得到所有回波之和,map_x距离轴分辨单元，map_y角度轴分辨单元,map数组中保存的是物体的速度（如果存在),angle为当前扫描角度
 distance=size(map,1);

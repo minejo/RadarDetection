@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 function hasObject = cfarhandled(data,search_sita,deltaR)
 %通过距离维与速度维各做一次cacfar，综合判断是否出现目标
 [M N]=size(data); %获取一维变化点数与二维变换点数

@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 function [map,R_pre,sita_pre] = updatemap(map,R,R_pre,sita,sita_pre,v)
 %改变物体的map中映射的位置,R_pre,sita_pre为前一时刻物体的位置和角度，p,sita为此刻物体对应的位置和角度
 [x,y]=size(map);

@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 function fft2 =after2fft(response,N,fs,T,B,f0)
 %返回二维fft变换后的矩阵
 c=3e8;
