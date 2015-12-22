@@ -29,7 +29,7 @@ hold on;
 
 for i=1:M
     for j=1:N/2
-        %×ÝÖáoscfar
+        %×ÝÖácfar
         cankao1=zeros(L_v); %²Î¿¼´°
         if(i>(L_v/2+r)&&i<=M-L_v/2-r)
             cankao1=[data(i-L_v/2-r:i-r-1,j)' data(i+r+1:i+L_v/2+r,j)'];

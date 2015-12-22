@@ -65,22 +65,26 @@ for i=1:length(t)
         for k=1:M
             za(k,:)=wbfb(1.5,2.2);
         end
-        response = response + za;
+        response = response + (za);
         
         %%%%%%%%%%对差频信号进行二维fft变换%%%%%%%%%
         data = after2fft(response, N, Fs, T, B, f0); %二维变换后的矩阵
         data=abs(data);
+        %去除低频率的杂波与静止物体
+        for i=1:N
+            data(1,i)=data(2,i);
+        end
         
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
         hasObject = cfarhandled(data,search_sita,deltaR);
-        x_distance=(linspace(0,Fs*(N-1)/N,N));
-        y_velocity=linspace(0, 1/T*(M-1)/M, M);
-        meshx=x_distance(1:N/2)*c/(2*B/T);
-        figure;
-        mesh(meshx,c*y_velocity/(2*f0),hasObject);
-        title('恒虚警检测结果');
-        xlabel('distance/m');
-        ylabel('velocity/(m/s)');
+%         x_distance=(linspace(0,Fs*(N-1)/N,N));
+%         y_velocity=linspace(0, 1/T*(M-1)/M, M);
+%         meshx=x_distance(1:N/2)*c/(2*B/T);
+%         figure;
+%         mesh(meshx,c*y_velocity/(2*f0),hasObject);
+%         title('恒虚警检测结果');
+%         xlabel('distance/m');
+%         ylabel('velocity/(m/s)');
     end
     %%%%%%%%波束方位角%%%%%%%%%%
     disp('当前波束扫描角度为：');

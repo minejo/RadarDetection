@@ -6,7 +6,7 @@ function dsig = getdisg( R0,v0,B,f0,T,fs,M)
 %得到单个物体的差频信号
 
 c=3e8;
-A=20; %发射信号幅度
+A=15; %发射信号幅度
 
 t=0:1/fs:T-1/fs; %采样时间维
 u=B/T;
@@ -19,7 +19,7 @@ fw=2*u.*Rn/c;
 %phase0 初始相位
 phase0=2*pi*f0*2*R0/c;
 %采样点数
-fa_num=fs*T;
+fa_num=round(fs*T);
 freq=zeros(M,fa_num);
 
 %差频频率
