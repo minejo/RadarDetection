@@ -96,22 +96,22 @@ for k=1:50
             end
             
             %%%%%%%%%%%%%%%%%%%%%%使用一维ca-cfar方案%%%%%%%%%%%%%%%%%%%%%%%%%%
-                                                hasObject1=cacfar(data(i,j),cankao1,K2);
-                                                hasObject = hasObject1;
+            hasObject1=cacfar(data(i,j),cankao1,K2);
+            hasObject = hasObject1;
             % %
             %%%%%%%%%%%%%%%%%%%%使用二维十字窗相与算法%%%%%%%%%%%%%%%%%%%%%%%%%
-%             hasObject1=cacfar(data(i,j),cankao1,K2);
-%             hasObject2=cacfar(data(i,j),cankao2,K1);
-%             hasObject = hasObject1*hasObject2;
+            %             hasObject1=cacfar(data(i,j),cankao1,K2);
+            %             hasObject2=cacfar(data(i,j),cankao2,K1);
+            %             hasObject = hasObject1*hasObject2;
             %%%%%%%%%%%%%%%%%%%使用二维十字窗改进尖峰算法%%%%%%%%%%%%%%%%%%%%%%
-%                         %判断该点是否是顶点
-%                         isTop=1;
-%                         if(i>1&&i<H&&j>1&&j<N/2)
-%                             isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
-%                         end
-%                         hasObject1=cacfar(data(i,j),cankao1,K2);
-%                         hasObject2=cacfar(data(i,j),cankao2,K1);
-%                         hasObject = hasObject1*hasObject2*isTop;
+            %                         %判断该点是否是顶点
+            %                         isTop=1;
+            %                         if(i>1&&i<H&&j>1&&j<N/2)
+            %                             isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
+            %                         end
+            %                         hasObject1=cacfar(data(i,j),cankao1,K2);
+            %                         hasObject2=cacfar(data(i,j),cankao2,K1);
+            %                         hasObject = hasObject1*hasObject2*isTop;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if hasObject
                 if(j == 335 && i ==15)%动物体对应的横坐标
