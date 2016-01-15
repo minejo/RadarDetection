@@ -3,7 +3,7 @@ function [ v1, R1, sita1 ] = obmutipoint( R,v, sita, deltaR, deltat )
 %v是实时速度数组，R是实时距离数组，sita是实时角度数组，deltaR为平均距离误差
 n = length(R);
 R_error = (rand(1, n) *2-1)* deltaR * 0.2; %产生随机距离误差
-v_error = (rand(1,n)*2-1).*v*deltat*0.2;%产生随机速度误差
+v_error = (rand(1,n)*2-1).*2*0.2;%产生随机速度误差
 sita_error = (rand(1,n)*2-1).*1;%产生随机角度误差
 v1=zeros(1,n);
 R1=zeros(1,n);

@@ -35,7 +35,40 @@ polar(sita1_1/180*pi,R1_1,'r');
 hold on;
 polar(sita1_2/180*pi,R1_2,'g');
 
+distanceData = [R1;R1_1;R1_2;R2;R2_1;R2_2];
+velocityData = [v1;v1_1;v1_2;v2;v2_1;v2_2];
+angleData = [sita1;sita1_1;sita1_2;sita2;sita2_1;sita2_2];
 %点迹聚合
+distanceDoor = 4; %距离门
+angleDoor=3; %方位门
+velocityDoor = 2; %速度门
+object = cell(1,length(t)); %每个扫描段的目标凝聚结果
+for n = 1:length(t)
+    X=[distanceData(:,n) velocityData(:,n)];
+    [class, type] = dbscan(X,2,[]);
+    clusternum = class(end);%簇的个数
+    objectnum = size(X,1); %出现目标的个数
+    objectcell=cell(1, clusternum); %存放各个簇的cell单元
+    objectsize = zeros(1, clusternum);%每个簇的物体大概尺寸
+    
+    
+    %把目标分别分到对应的cell簇单元中
+    for i = 1:objectnum
+        if(isempty(objectcell{class(i)}))
+            objectcell{class(i)} = X(i,:);
+        else
+            objectcell{class(i)} = [objectcell{class(i)};X(i,:)];
+        end    
+    end
+    %更新每个簇的目标大概尺寸，根据k-means方法目标凝聚
+    for i = 1:clusternum
+      dis = objectcell{i}(:,1); %取簇中的距离维
+      vel = objectcell{i}(:,2); %取簇中的速度维
+      objectsize(i) = max(dis)-min(dis);
+      
+      object{n} = [object{n};mean(dis) mean(vel)];
+    end    
+ end
 
 %航迹起始
 
