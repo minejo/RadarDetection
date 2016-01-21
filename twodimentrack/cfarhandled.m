@@ -2,7 +2,7 @@
 %%% Author: Chao Li %%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-function search_result = cfarhandled(data,search_sita,deltaR, deltaV)
+function one_result = cfarhandled(data,search_sita,deltaR, deltaV)
 %通过距离维与速度维各做一次cacfar，综合判断是否出现目标
 [M N]=size(data); %获取一维变化点数与二维变换点数
 
@@ -15,7 +15,7 @@ K1=(pfa_d)^(-1/L_d)-1; %虚警门限
 K2=(pfa_v)^(-1/L_v)-1;
 
 %hasObject=zeros(M,N/2);
-search_result = [];
+one_result = [];
 figure(1)
 %铁路距离
 rail_dis=100;
@@ -70,7 +70,7 @@ for i=1:M
             hold on;
             
             %返回数组表示当前波束内的一次扫描的所有结果，分为3列：距离 速度 方位角
-            search_result = [ search_result; j*deltaR  i*deltaV search_sita];
+            one_result = [ one_result; j*deltaR  i*deltaV search_sita];
         end
         
     end

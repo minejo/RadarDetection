@@ -97,34 +97,35 @@ for i=1:length(t)
         %%%%%%%%%%轨迹处理%%%%%%%%%%%
         %轨迹处理的优先顺序：1.轨迹维持 2.创建轨迹 3.创建临时轨迹 4.创建轨迹头
         if (~isempty(track_normal))
-            if(~isempty(search_result))
+            if(~isempty(ones_result))
                 %轨迹维持todo
             end
             %如果点迹经过轨迹维持后没有了，则清空临时轨迹和轨迹头
-            if(isempty(search_result))
+            if(isempty(ones_result))
                 track_temp = {};
                 track_head = [];
             end
         end
         
         if(~isempty(track_temp))
-            if(~isempty(search_result))
+            if(~isempty(ones_result))
                 %创建轨迹todo
             end
             %如果点迹经过创建轨迹后没有了，则清空轨迹头
-            if(isempty(search_result))
+            if(isempty(ones_result))
                 track_head = [];
             end
         end
         
         if(~isempty(track_head))
-            if(~isempty(search_result))
+            if(~isempty(ones_result))
                 %创建临时轨迹todo
             end
         end
         
-        if(~isempty(search_result))
-            %创建轨迹头todo
+        if(~isempty(ones_result))
+            %创建轨迹头
+            track_head = [track_head; ones_result];
         end
         
         
