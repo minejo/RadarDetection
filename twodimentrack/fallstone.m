@@ -45,10 +45,13 @@ map(fix(R1/0.1), sita1)=0;
 
 R_pre=fix(R0/0.1); %map更新时对应的上一时刻的值
 sita_pre=sita0;
-
+%%%%%%%%%%%%%%轨迹相关设置%%%%%%%%%%%%%%%%%
+track_head = []; %运动轨迹头，分为3列，分别是距离，速度，方位，初始为空
+track_temp = {}; %临时运动轨迹集合，每个临时轨迹为一个cell单元，cell单元中包含小于5个点的轨迹，每个点的结构同轨迹头
+track_normal = {};%正式轨迹集合，每个轨迹为一个cell，cell单元中包含多于5个点的轨迹
 %%%%%%%%%%%%%扫描map得到回波并处理%%%%%%%%%%%%%
 search_sita=30;
-search_result = {};
+search_result = {}; %所有波束扫描的动目标集合，每个波束的结果为一个cell单元
 for i=1:length(t)
     %实时更新map
     [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));
@@ -61,8 +64,8 @@ for i=1:length(t)
         response = awgn(response, SNR);
         %添加杂波信号
         za=zeros(M,N);
-%         Z=terrain; %生成地形数据矩阵
-%         hangza=zabo(B,f0,fs,T,B/T,3,Rmax,Z);
+        %         Z=terrain; %生成地形数据矩阵
+        %         hangza=zabo(B,f0,fs,T,B/T,3,Rmax,Z);
         for k=1:M
             za(k,:)=wbfb(1.5,2.2);
         end
@@ -72,29 +75,64 @@ for i=1:length(t)
         data = after2fft(response, N, Fs, T, B, f0); %二维变换后的矩阵
         data=abs(data);
         %去除低频率的杂波与静止物体
-%         for i=1:N
-%             data(1,i)=data(2,i);
-%         end
+        %         for i=1:N
+        %             data(1,i)=data(2,i);
+        %         end
         data = data(2:M, :);
         
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
         ones_result = cfarhandled(data,search_sita,deltaR, deltaV);
+        %单波束结果聚合操作
+        %todo
         search_result = [search_result; ones_result];
-%         x_distance=(linspace(0,Fs*(N-1)/N,N));
-%         y_velocity=linspace(0, 1/T*(M-1)/M, M);
-%         meshx=x_distance(1:N/2)*c/(2*B/T);
-%         figure;
-%         mesh(meshx,c*y_velocity/(2*f0),hasObject);
-%         title('恒虚警检测结果');
-%         xlabel('distance/m');
-%         ylabel('velocity/(m/s)');
+        %         x_distance=(linspace(0,Fs*(N-1)/N,N));
+        %         y_velocity=linspace(0, 1/T*(M-1)/M, M);
+        %         meshx=x_distance(1:N/2)*c/(2*B/T);
+        %         figure;
+        %         mesh(meshx,c*y_velocity/(2*f0),hasObject);
+        %         title('恒虚警检测结果');
+        %         xlabel('distance/m');
+        %         ylabel('velocity/(m/s)');
+        
+        %%%%%%%%%%轨迹处理%%%%%%%%%%%
+        %轨迹处理的优先顺序：1.轨迹维持 2.创建轨迹 3.创建临时轨迹 4.创建轨迹头
+        if (~isempty(track_normal))
+            if(~isempty(search_result))
+                %轨迹维持todo
+            end
+            %如果点迹经过轨迹维持后没有了，则清空临时轨迹和轨迹头
+            if(isempty(search_result))
+                track_temp = {};
+                track_head = [];
+            end
+        end
+        
+        if(~isempty(track_temp))
+            if(~isempty(search_result))
+                %创建轨迹todo
+            end
+            %如果点迹经过创建轨迹后没有了，则清空轨迹头
+            if(isempty(search_result))
+                track_head = [];
+            end
+        end
+        
+        if(~isempty(track_head))
+            if(~isempty(search_result))
+                %创建临时轨迹todo
+            end
+        end
+        
+        if(~isempty(search_result))
+            %创建轨迹头todo
+        end
+        
+        
+        %%%%%%%%波束方位角%%%%%%%%%%
+        disp('当前波束扫描角度为：');
+        search_sita = search_sita + angle %波束指向下一个方位
+        if(search_sita > 150)
+            search_sita = 30;
+        end
     end
-    %%%%%%%%波束方位角%%%%%%%%%%
-    disp('当前波束扫描角度为：');
-    search_sita = search_sita + angle %波束指向下一个方位
-    if(search_sita > 150)
-        search_sita = 30;
-    end
-end
-%轨迹处理
 end
