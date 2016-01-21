@@ -2,20 +2,20 @@
 %%% Author: Chao Li %%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-function hasObject = cfarhandled(data,search_sita,deltaR)
+function search_result = cfarhandled(data,search_sita,deltaR, deltaV)
 %通过距离维与速度维各做一次cacfar，综合判断是否出现目标
 [M N]=size(data); %获取一维变化点数与二维变换点数
 
 L_v=14; %速度维参考窗长度
 L_d=32; %距离维参考窗长度
 r=1; %保护单元长度
-pfa_d=1e-2; %距离维虚警率
-pfa_v=1e-2; %速度维虚警率
+pfa_d=3e-2; %距离维虚警率
+pfa_v=3e-2; %速度维虚警率
 K1=(pfa_d)^(-1/L_d)-1; %虚警门限
 K2=(pfa_v)^(-1/L_v)-1;
 
-hasObject=zeros(M,N/2);
-
+%hasObject=zeros(M,N/2);
+search_result = [];
 figure(1)
 %铁路距离
 rail_dis=100;
@@ -63,12 +63,16 @@ for i=1:M
         if(i>1&&i<M&&j>1&&j<N/2)
             isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
         end
-        hasObject(i,j) = hasObject1*hasObject2*isTop;
+        hasObject = hasObject1*hasObject2*isTop;
         
-        if hasObject(i,j) == 1
+        if hasObject == 1
             polar(search_sita/180*pi, j*deltaR, '*r');
             hold on;
+            
+            %返回数组表示当前波束内的一次扫描的所有结果，分为3列：距离 速度 方位角
+            search_result = [ search_result; j*deltaR  i*deltaV search_sita];
         end
+        
     end
 end
 end

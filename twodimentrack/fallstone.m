@@ -10,7 +10,7 @@ Rmax=300; %最大处理距离
 Fs=4*B*Rmax/(T*c); %差频信号采样率
 N=round(Fs*T); %距离维采样点数
 M=fix(c/(deltaV*2*T*f0)); %速度维采样点数
-Vmax=M*deltaV;  %最大不模糊距离
+Vmax=M*deltaV;  %最大不模糊速度
 %%%%%%%%%%设置参数%%%%%%%%%%%%%%%%%%%%%%%
 angle=3; %方位向波束角度
 T1=M*T; %单波束驻留时间
@@ -48,6 +48,7 @@ sita_pre=sita0;
 
 %%%%%%%%%%%%%扫描map得到回波并处理%%%%%%%%%%%%%
 search_sita=30;
+search_result = {};
 for i=1:length(t)
     %实时更新map
     [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));
@@ -71,12 +72,14 @@ for i=1:length(t)
         data = after2fft(response, N, Fs, T, B, f0); %二维变换后的矩阵
         data=abs(data);
         %去除低频率的杂波与静止物体
-        for i=1:N
-            data(1,i)=data(2,i);
-        end
+%         for i=1:N
+%             data(1,i)=data(2,i);
+%         end
+        data = data(2:M, :);
         
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
-        hasObject = cfarhandled(data,search_sita,deltaR);
+        ones_result = cfarhandled(data,search_sita,deltaR, deltaV);
+        search_result = [search_result; ones_result];
 %         x_distance=(linspace(0,Fs*(N-1)/N,N));
 %         y_velocity=linspace(0, 1/T*(M-1)/M, M);
 %         meshx=x_distance(1:N/2)*c/(2*B/T);
