@@ -47,8 +47,8 @@ R_pre=fix(R0/0.1); %map更新时对应的上一时刻的值
 sita_pre=sita0;
 %%%%%%%%%%%%%%轨迹相关设置%%%%%%%%%%%%%%%%%
 track_head = []; %运动轨迹头，分为3列，分别是距离，速度，方位，初始为空
-track_temp = {}; %临时运动轨迹集合，每个临时轨迹为一个cell单元，cell单元中包含小于5个点的轨迹，每个点的结构同轨迹头
-track_normal = {};%正式轨迹集合，每个轨迹为一个cell，cell单元中包含多于5个点的轨迹
+track_temp = {}; %临时运动轨迹cell集合，每个临时轨迹为一个矩阵，包含小于5个点的轨迹，每个点的结构同轨迹头
+track_normal = {};%正式轨迹集合，每个轨迹为一个矩阵，包含多于5个点的轨迹
 %%%%%%%%%%%%%扫描map得到回波并处理%%%%%%%%%%%%%
 search_sita=30;
 search_result = {}; %所有波束扫描的动目标集合，每个波束的结果为一个cell单元
@@ -82,7 +82,7 @@ for i=1:length(t)
         
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
         ones_result = cfarhandled(data,search_sita,deltaR, deltaV);
-        %扫描结果加上时间戳
+        %扫描结果第四列加上时间戳
         for k=1:size(ones_result,1)
             ones_result(k, :) = [ones_result(k, :) t];
         end
@@ -123,8 +123,8 @@ for i=1:length(t)
         
         if(~isempty(track_head))
             if(~isempty(ones_result))
-                %创建临时轨迹todo
-                [track_temp, track_head, ones_result] = create_temptrack(track_temp, track_head, ones_result);
+                %创建临时轨迹
+                [track_temp, track_head, ones_result] = create_temptrack(track_temp, track_head, ones_result, TT);
             end
         end
         
