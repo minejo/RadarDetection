@@ -99,7 +99,7 @@ for i=1:length(t)
         %         ylabel('velocity/(m/s)');
         
         %%%%%%%%%%轨迹处理%%%%%%%%%%%
-        %轨迹处理的优先顺序：1.轨迹维持 2.创建轨迹 3.创建临时轨迹 4.创建轨迹头
+        %当一屏目标数据来临后，轨迹处理的优先顺序：1.轨迹维持 2.创建轨迹 3.创建临时轨迹 4.创建轨迹头
         if (~isempty(track_normal))
             if(~isempty(ones_result))
                 %轨迹维持todo
@@ -113,7 +113,8 @@ for i=1:length(t)
         
         if(~isempty(track_temp))
             if(~isempty(ones_result))
-                %创建轨迹todo
+                %创建正式轨迹
+                [track_temp, track_normal, ones_result] = create_formaltrack(track_temp, track_normal, ones_result, TT);
             end
             %如果点迹经过创建轨迹后没有了，则清空轨迹头
             if(isempty(ones_result))
