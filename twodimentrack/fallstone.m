@@ -82,6 +82,10 @@ for i=1:length(t)
         
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
         ones_result = cfarhandled(data,search_sita,deltaR, deltaV);
+        %扫描结果加上时间戳
+        for k=1:size(ones_result,1)
+            ones_result(k, :) = [ones_result(k, :) t];
+        end
         %单波束结果聚合操作
         %todo
         search_result = [search_result; ones_result];
@@ -120,6 +124,7 @@ for i=1:length(t)
         if(~isempty(track_head))
             if(~isempty(ones_result))
                 %创建临时轨迹todo
+                [track_temp, track_head, ones_result] = create_temptrack(track_temp, track_head, ones_result);
             end
         end
         
