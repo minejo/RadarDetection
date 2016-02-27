@@ -21,7 +21,17 @@ t=0:deltat:3;
 % %R2=80;sita2=50;
 % %                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-polar(sita2/180*pi, R2,'*');
+set(gcf,'Position',[100 100 260 220]);
+set(gca,'Position',[.13 .17 .80 .74]);  %调整 XLABLE和YLABLE不会被切掉
+figure_FontSize=8;
+set(get(gca,'XLabel'),'FontSize',figure_FontSize,'Vertical','top');
+set(get(gca,'YLabel'),'FontSize',figure_FontSize,'Vertical','middle');
+set(findobj('FontSize',10),'FontSize',figure_FontSize);
+set(findobj(get(gca,'Children'),'LineWidth',0.5),'LineWidth',2);
+
+figure
+subplot(1,2,1);
+polar(sita2/180*pi, R2,'b');
 hold on;
 polar(sita2_1/180*pi,R2_1,'r');
 hold on;
@@ -29,12 +39,11 @@ polar(sita2_2/180*pi,R2_2,'g');
 
 hold on;
 
-polar(sita1/180*pi, R1,'*');
+polar(sita1/180*pi, R1,'b');
 hold on;
 polar(sita1_1/180*pi,R1_1,'r');
 hold on;
 polar(sita1_2/180*pi,R1_2,'g');
-
 distanceData = [R1;R1_1;R1_2;R2;R2_1;R2_2];
 velocityData = [v1;v1_1;v1_2;v2;v2_1;v2_2];
 angleData = [sita1;sita1_1;sita1_2;sita2;sita2_1;sita2_2];
@@ -44,7 +53,7 @@ angleDoor=3; %方位门
 velocityDoor = 2; %速度门
 object = cell(1,length(t)); %每个扫描段的目标凝聚结果
 for n = 1:length(t)
-    X=[distanceData(:,n) velocityData(:,n)];
+    X=[distanceData(:,n) velocityData(:,n) angleData(:,n)];
     [class, type] = dbscan(X,2,[]);
     clusternum = class(end);%簇的个数
     objectnum = size(X,1); %出现目标的个数
@@ -64,12 +73,29 @@ for n = 1:length(t)
     for i = 1:clusternum
       dis = objectcell{i}(:,1); %取簇中的距离维
       vel = objectcell{i}(:,2); %取簇中的速度维
+      ang = objectcell{i}(:,3); %取簇中的方位维
       objectsize(i) = max(dis)-min(dis);
       
-      object{n} = [object{n};mean(dis) mean(vel)];
+      object{n} = [object{n};mean(dis) mean(vel) mean(ang)];
     end    
- end
-
+end
+%画出点迹凝聚后的图
+re_dis_1 = [];
+re_angle_1 = [];
+re_v_1 = [];
+re_dis_2 = [];
+re_angle_2 = [];
+re_v_2 = []
+for i = 1:length(t)
+    re_dis_1 = [re_dis_1 object{i}(1,1)];
+    re_angle_1 = [re_angle_1 object{i}(1,3)];
+    re_dis_2 = [re_dis_2 object{i}(2,1)];
+    re_angle_2 = [re_angle_2 object{i}(2,3)];
+end
+subplot(1,2,2);
+polar(re_angle_2/180*pi,re_dis_2,'r');
+hold on;
+polar(re_angle_1/180*pi, re_dis_1,'b');
 %航迹起始
 
 %航迹维持
