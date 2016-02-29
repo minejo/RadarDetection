@@ -25,9 +25,9 @@ for i=1: head_num
     end
     if(minWeignt ~= 10000)%确定找到合适的目标
         temp = [head; ones_result(j,:)];
-        track_temp = {track_temp temp};%生成临时轨迹并加入到集合中
-        track_head1(i) = [];%删除该轨迹头
-        ones_result(j) = [];%删除该目标
+        track_temp = [track_temp temp];%生成临时轨迹并加入到集合中
+        track_head1(i,:) = [];%删除该轨迹头
+        ones_result(j,:) = [];%删除该目标
     end
     
 end

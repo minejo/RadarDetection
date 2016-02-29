@@ -83,9 +83,9 @@ for i=1:length(t)
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
         ones_result = cfarhandled(data,search_sita,deltaR, deltaV);
         %扫描结果第四列加上时间戳
-        for k=1:size(ones_result,1)
-            ones_result(k, :) = [ones_result(k, :) t(i)];
-        end
+        
+        ones_result = [ones_result ones(size(ones_result,1),1)*t(i)];
+        
         %单波束结果聚合操作
         %todo
         search_result = [search_result; ones_result];
@@ -133,13 +133,11 @@ for i=1:length(t)
             %创建轨迹头
             track_head = [track_head; ones_result];
         end
-        
-        
-        %%%%%%%%波束方位角%%%%%%%%%%
-        disp('当前波束扫描角度为：');
-        search_sita = search_sita + angle %波束指向下一个方位
-        if(search_sita > 150)
-            search_sita = 30;
-        end
+    end
+    %%%%%%%%波束方位角%%%%%%%%%%
+    disp('当前波束扫描角度为：');
+    search_sita = search_sita + angle %波束指向下一个方位
+    if(search_sita > 150)
+        search_sita = 30;
     end
 end

@@ -13,6 +13,6 @@ one_time = one(4); %获取目标的时间戳
 isTrue = 0;
 if( abs(distance-one_distance) <= dis_diff && abs(velocity - one_velocity) <= v_diff && abs(fangwei - one_fangwei) <= fangwei_diff && abs(time-one_time) <= time_diff)
   isTrue = 1;
-  Weightmean = 0.3*(distance-one_distance) + 0.2*(time-one_time) + 0.3*(velocity - one_velocity) + 0.2*(fangwei - one_fangwei);%计算权重
+  Weightmean = 0.3*abs(distance-one_distance) + 0.2*abs(time-one_time) + 0.3*abs(velocity - one_velocity) + 0.2*abs(fangwei - one_fangwei);%计算权重
 end
 end

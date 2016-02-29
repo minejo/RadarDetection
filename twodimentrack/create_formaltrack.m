@@ -18,16 +18,16 @@ for i=1:temp_num
     for j = 1:scan_num
         one = ones_result(j,:); %获取一个扫描目标
         [isTrue, Weightmean] = temptrackfindobject(onetemptrack, one, time_diff, dis_diff, v_diff, fangwei_diff,TT,t);%该点是否多个条件都符合，如果符合权重加和为多少
-        if(Weightmean < minWeignt)
-            minWeignt = Weightmean;
+        if(Weightmean < minWeight)
+            minWeight = Weightmean;
             scan_result = j;
         end
     end
     if(minWeight ~= 10000) %确定找到合适的目标
         formal = [onetemptrack; ones_result(j,:)];
-        track_normal = {track_normal formal};%生成正式轨迹并加入到集合中
+        track_normal = [track_normal formal];%生成正式轨迹并加入到集合中
         track_temp1(i) = []; %删除临时轨迹
-        track_result(j) = []; %删除已处理的目标
+        ones_result(j,:) = []; %删除已处理的目标
     end
 end
 end
