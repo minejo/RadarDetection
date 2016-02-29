@@ -84,7 +84,7 @@ for i=1:length(t)
         ones_result = cfarhandled(data,search_sita,deltaR, deltaV);
         %扫描结果第四列加上时间戳
         for k=1:size(ones_result,1)
-            ones_result(k, :) = [ones_result(k, :) t];
+            ones_result(k, :) = [ones_result(k, :) t(i)];
         end
         %单波束结果聚合操作
         %todo
@@ -114,7 +114,7 @@ for i=1:length(t)
         if(~isempty(track_temp))
             if(~isempty(ones_result))
                 %创建正式轨迹
-                [track_temp, track_normal, ones_result] = create_formaltrack(track_temp, track_normal, ones_result, TT);
+                [track_temp, track_normal, ones_result] = create_formaltrack(track_temp, track_normal, ones_result, TT,t(i));
             end
             %如果点迹经过创建轨迹后没有了，则清空轨迹头
             if(isempty(ones_result))
