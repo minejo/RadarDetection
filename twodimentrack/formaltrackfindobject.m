@@ -11,5 +11,7 @@ function  [isTrue, Weightmean] = formaltrackfindobject(oneformaltrack, one, time
 p1 = oneformaltrack(end-2,:);
 p2 = oneformaltrack(end-1,:);
 p3 = oneformaltrack(end,:);
+%根据三个点预测第四个点
+p4 = threePredict(p1, p2, p3, t);
 
 end
