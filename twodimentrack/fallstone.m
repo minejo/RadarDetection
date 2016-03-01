@@ -88,7 +88,7 @@ for i=1:length(t)
         
         %单波束结果聚合操作
         %todo
-        search_result = [search_result; ones_result];
+        search_result = [search_result ones_result];
         %         x_distance=(linspace(0,Fs*(N-1)/N,N));
         %         y_velocity=linspace(0, 1/T*(M-1)/M, M);
         %         meshx=x_distance(1:N/2)*c/(2*B/T);
@@ -102,7 +102,8 @@ for i=1:length(t)
         %当一屏目标数据来临后，轨迹处理的优先顺序：1.轨迹维持 2.创建轨迹 3.创建临时轨迹 4.创建轨迹头
         if (~isempty(track_normal))
             if(~isempty(ones_result))
-                %轨迹维持todo
+                %轨迹维持，取正式轨迹的后三个点进行预测与误差限定
+                [track_normal, ones_result] = maintain_formaltrack(track_normal, ones_result, TT, t(i));
             end
             %如果点迹经过轨迹维持后没有了，则清空临时轨迹和轨迹头
             if(isempty(ones_result))

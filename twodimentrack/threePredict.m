@@ -2,8 +2,8 @@
 %%% Author: Chao Li %%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-function point = twoPredict(point1, point2, t)
-%利用两点的状态信息进行第三个点的预测,每个点为一个行向量，分别为距离，速度，方位，时间
+function point = threePredict(point1, point2, point3, t)
+%利用三点的状态信息进行第三个点的预测,每个点为一个行向量，分别为距离，速度，方位，时间
 Rs2 = point2(1); %对第二点的距离估计
 Fs2 = point2(3); %对第二点的方位估计
 T=point2(4)-point1(4); %两点之间的时间差

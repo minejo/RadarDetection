@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 function [isTrue, Weightmean]= headfindobject(head, one,time_diff,dis_diff,v_diff,fangwei_diff)
 %该函数主要判断某点与某轨迹头是否可以形成轨迹，主要通过时间，距离，速度，方位等多方面信息进行关联，
 %如果可以，计算多个方面的差异的权重和值，设定距离占30%，时间20%，方位20%，速度30%，权值越小越合适

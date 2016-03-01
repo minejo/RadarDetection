@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 function [isTrue, Weightmean] = temptrackfindobject(onetemptrack, one, time_diff, dis_diff, v_diff, fangwei_diff,TT,t)
 %该函数主要判断某点与某临时轨迹能否关联，形成正式轨迹，由于临时轨迹有两点，可以通过该两点预测下一个点的信息，然后设立
 %相应的波门，在波门内寻找目标，由于波门内可能有多个目标，此时可以通过多个方面的信息进行参考，比如时间，距离，速度，方位
