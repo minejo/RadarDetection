@@ -2,7 +2,7 @@
 %%% Author: Chao Li %%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-function [track_normal, ones_result] = maintain_formaltrack(track_normal, ones_result, TT, t(i))
+function [track_normal, ones_result] = maintain_formaltrack(track_normal, ones_result, TT, t)
 %轨迹维持函数，判断一个点与正式轨迹是否匹配。主要通过获取正式轨迹后三点，进行轨迹预测，然后与所测点进行
 %比较，判断是否在误差范围内
 formal_num = length(track_normal); %正式轨迹的数目
@@ -19,7 +19,7 @@ for i=1:formal_num
     for j = 1:scan_num
         one = ones_result(j,:); %获取一个扫描目标
         [isTrue, Weightmean] = formaltrackfindobject(oneformaltrack, one, time_diff, dis_diff, v_diff, fangwei_diff,TT,t);%该点是否多个条件都符合，如果符合权重加和为多少
-        if(Weightmean < minWeight)
+        if(Weightmean < minWeight && isTrue)
             minWeight = Weightmean;
             scan_result = j;
         end

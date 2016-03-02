@@ -18,7 +18,7 @@ for i=1: head_num
     for j = 1:scan_num
         one = ones_result(j,:); %获取一个扫描目标
         [isTrue, Weightmean]= headfindobject(head, one, time_diff,dis_diff,v_diff,fangwei_diff); %该点是否多个条件都符合，如果符合权重加和为多少
-        if(Weightmean < minWeignt)
+        if(Weightmean < minWeignt && isTrue)
             minWeignt = Weightmean;
             scan_result = j;
         end

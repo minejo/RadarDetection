@@ -25,7 +25,7 @@ Fp3 = Fs2 + T2*Fvs2;
 %ÂË²¨
 Rs3 = Rp3 + alpha*(point3(1) - Rp3);
 Vs3 = Vp3 + beta/T2*(point3(1) - Rp3);
-As3 = Ap3 + 2*r/(T2*T2)*(point3(1) - Rp3);
+As3 = Ap3 + 2*gamma/(T2*T2)*(point3(1) - Rp3);
 Fs3 = Fp3 + alpha*(point3(3) - Fp3);
 Fvs3 = (point3(3)-point2(3))/T2;
 

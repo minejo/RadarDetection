@@ -24,6 +24,7 @@ one_fangwei = one(3);%获取目标的方位
 one_time = one(4); %获取目标的时间戳
 %根据设置合理的误差范围来判断实际点与预测点是否符合
 isTrue = 0;
+Weightmean=1;
 if( abs(distance-one_distance) <= dis_diff && abs(velocity - one_velocity) <= v_diff && abs(fangwei - one_fangwei) <= fangwei_diff && abs(time-one_time) <= time_diff)
   isTrue = 1;
   Weightmean = 0.3*abs(distance-one_distance) + 0.2*abs(time-one_time) + 0.3*abs(velocity - one_velocity) + 0.2*abs(fangwei - one_fangwei);%计算权重
