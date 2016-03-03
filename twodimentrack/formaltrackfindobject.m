@@ -13,6 +13,7 @@ p2 = oneformaltrack(end-1,:);
 p3 = oneformaltrack(end,:);
 %根据三个点预测第四个点
 p4 = threePredict(p1, p2, p3, t);
+%p4 = twoPredict(p2,p3,t);
 
 distance = p4(1); %获取预测点的距离
 velocity = p4(2);%获取预测点的速度

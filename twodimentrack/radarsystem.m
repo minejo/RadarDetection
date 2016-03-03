@@ -27,5 +27,5 @@ end
  
 %铁道隧道或沿线口崩塌落石场景
 if type == 3
-    fallstone(T,f0,B,deltaR,deltaV);    
+    [search_result,track_head,track_temp,track_normal] =fallstone(T,f0,B,deltaR,deltaV);    
 end

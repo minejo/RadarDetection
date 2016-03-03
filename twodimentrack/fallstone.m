@@ -3,7 +3,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%铁道隧道或沿线口崩塌落石场景%%%%%%%%%%
-function fallstone(T,f0,B,deltaR, deltaV)
+function [search_result,track_head,track_temp,track_normal] = fallstone(T,f0,B,deltaR, deltaV)
 c=3e8;
 %%%%%%%%%确定分辨率%%%%%%%%%%%%%%
 Rmax=300; %最大处理距离
@@ -21,18 +21,31 @@ t=0:T1 :25*TT; %设置扫描时间为10周期
 %%%%%%%%%%%%%%%初始化map图%%%%%%%%%%%%%%%%%
 map=ones(fix(Rmax/0.1), 180)*(-1); %map图距离维最小单元为0.1m，角度维最小距离为1度
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-%   物体运动模型设置     %
+%   物体1运动模型设置     %
 R0=70; %初始距离
 v0=-4; %初始速度,接近雷达方向为正
 a=-3; %加速度
 
 sita0=50;%初始角度
-sita_a=1;%角度变化加速度
-sita_v0=1;%角度变化初始速度
+sita_a=0;%角度变化加速度
+sita_v0=-5;%角度变化初始速度
 
 v=v0+a.*t;
 R=R0-(v0.*t + 0.5*a.*t.^2);
 sita=sita0 + sita_v0.*t + 0.5*sita_a.*t.^2;
+
+%   物体2运动模型设置     %
+RR0=64; %初始距离
+vv0=-7; %初始速度,接近雷达方向为正
+aa=-2; %加速度
+
+ssita0=60;%初始角度
+ssita_a=0;%角度变化加速度
+ssita_v=2;%角度变化初始速度
+
+vv=vv0+aa.*t;
+RR=RR0-(vv0.*t + 0.5*aa.*t.^2);
+ssita=ssita0 + ssita_v.*t + 0.5*ssita_a.*t.^2;
 
 %      静止物体         %
 R1=72;sita1=50;
@@ -40,11 +53,16 @@ R1=72;sita1=50;
 %                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 map(fix(R0/0.1), sita0)=abs(v0);
+map(fix(RR0/0.1), ssita0)=abs(vv0);
+
 map(fix(R1/0.1), sita1)=0;
 %map(fix(R2/0.1), sita2)=0;
 
 R_pre=fix(R0/0.1); %map更新时对应的上一时刻的值
 sita_pre=sita0;
+
+RR_pre=fix(RR0/0.1);
+ssita_pre=ssita0;
 %%%%%%%%%%%%%%轨迹相关设置%%%%%%%%%%%%%%%%%
 track_head = []; %运动轨迹头，分为3列，分别是距离，速度，方位，初始为空
 track_temp = {}; %临时运动轨迹cell集合，每个临时轨迹为一个矩阵，包含小于5个点的轨迹，每个点的结构同轨迹头
@@ -54,7 +72,8 @@ search_sita=30;
 search_result = {}; %所有波束扫描的动目标集合，每个波束的结果为一个cell单元
 for i=1:length(t)
     %实时更新map
-    [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));
+    [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));%更新第一个物体
+     [map, RR_pre, ssita_pre] = updatemap(map, RR(i)/0.1, RR_pre, ssita(i), ssita_pre, abs(vv(i)));%更新第二个物体
     %获得回波差频信号
     response=getresponse(map,0.1,angle,search_sita,M,T,Fs,B,f0);
     
