@@ -24,6 +24,10 @@ for i=1:formal_num
             scan_result = j;
         end
     end
-
-
+    if(minWeight ~= 10000) %确定找到合适的目标
+        formal = [oneformaltrack; ones_result(j,:)];
+        track_normal{i} = formal;%维持正式轨迹并将结果修改到集合中
+        ones_result(j,:) = []; %删除已处理的目标
+    end
+end
 end

@@ -141,4 +141,6 @@ for i=1:length(t)
     if(search_sita > 150)
         search_sita = 30;
     end
+    
+end
 end
