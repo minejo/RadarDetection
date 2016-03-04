@@ -162,4 +162,5 @@ for i=1:length(t)
     end
     
 end
+getsepretetrack(track_normal);
 end
