@@ -7,6 +7,7 @@
 clear all;
 close all; 
 clc;
+warning off;
 c=3e8;
 type=3;
 %%%%%%%%%%%%%连续波雷达系统参数%%%%%%%%%%%%%%%%%%%

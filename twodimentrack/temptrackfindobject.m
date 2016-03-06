@@ -2,7 +2,7 @@
 %%% Author: Chao Li %%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-function [isTrue, Weightmean] = temptrackfindobject(onetemptrack, one, time_diff, dis_diff, v_diff, fangwei_diff,TT,t)
+function [isTrue, Weightmean] = temptrackfindobject(onetemptrack, one, time_diff,time_diff_min, dis_diff, v_diff, fangwei_diff,TT,t)
 %该函数主要判断某点与某临时轨迹能否关联，形成正式轨迹，由于临时轨迹有两点，可以通过该两点预测下一个点的信息，然后设立
 %相应的波门，在波门内寻找目标，由于波门内可能有多个目标，此时可以通过多个方面的信息进行参考，比如时间，距离，速度，方位
 %等信息，计算多个方面的差异的权重和值，设定距离占30%，时间20%，方位20%，速度30%，权值越小越合适
@@ -25,7 +25,7 @@ one_time = one(4); %获取目标的时间戳
 %根据设置合理的误差范围来判断实际点与预测点是否符合
 isTrue = 0;
 Weightmean=1;
-if( abs(distance-one_distance) <= dis_diff && abs(velocity - one_velocity) <= v_diff && abs(fangwei - one_fangwei) <= fangwei_diff && abs(time-one_time) <= time_diff)
+if( abs(distance-one_distance) <= dis_diff && abs(velocity - one_velocity) <= v_diff && abs(fangwei - one_fangwei) <= fangwei_diff && abs(time-one_time) <= time_diff && abs(point2(4)-one_time) >= time_diff_min)
   isTrue = 1;
   Weightmean = 0.3*abs(distance-one_distance) + 0.2*abs(time-one_time) + 0.3*abs(velocity - one_velocity) + 0.2*abs(fangwei - one_fangwei);%计算权重
 end

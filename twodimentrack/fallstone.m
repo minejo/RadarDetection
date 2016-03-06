@@ -24,11 +24,11 @@ map=ones(fix(Rmax/0.1), 180)*(-1); %map图距离维最小单元为0.1m，角度维最小距离为1
 %   物体1运动模型设置     %
 R0=70; %初始距离
 v0=-4; %初始速度,接近雷达方向为正
-a=-3; %加速度
+a=-2; %加速度
 
 sita0=50;%初始角度
 sita_a=0;%角度变化加速度
-sita_v0=-5;%角度变化初始速度
+sita_v0=8;%角度变化初始速度
 
 v=v0+a.*t;
 R=R0-(v0.*t + 0.5*a.*t.^2);
@@ -36,12 +36,12 @@ sita=sita0 + sita_v0.*t + 0.5*sita_a.*t.^2;
 
 %   物体2运动模型设置     %
 RR0=64; %初始距离
-vv0=-7; %初始速度,接近雷达方向为正
+vv0=-10; %初始速度,接近雷达方向为正
 aa=-2; %加速度
 
 ssita0=60;%初始角度
 ssita_a=0;%角度变化加速度
-ssita_v=2;%角度变化初始速度
+ssita_v=-2;%角度变化初始速度
 
 vv=vv0+aa.*t;
 RR=RR0-(vv0.*t + 0.5*aa.*t.^2);
@@ -70,10 +70,17 @@ track_normal = {};%正式轨迹集合，每个轨迹为一个矩阵，包含多于5个点的轨迹
 %%%%%%%%%%%%%扫描map得到回波并处理%%%%%%%%%%%%%
 search_sita=30;
 search_result = {}; %所有波束扫描的动目标集合，每个波束的结果为一个cell单元
+%添加杂波信号
+za=zeros(M,N);
+for k=1:M
+    za(k,:)=wbfb(1.5,2.2);
+end
+tolerance = 2;%容忍目标跟丢的周期数
+tolerance_count=0;
 for i=1:length(t)
     %实时更新map
     [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));%更新第一个物体
-     [map, RR_pre, ssita_pre] = updatemap(map, RR(i)/0.1, RR_pre, ssita(i), ssita_pre, abs(vv(i)));%更新第二个物体
+    [map, RR_pre, ssita_pre] = updatemap(map, RR(i)/0.1, RR_pre, ssita(i), ssita_pre, abs(vv(i)));%更新第二个物体
     %获得回波差频信号
     response=getresponse(map,0.1,angle,search_sita,M,T,Fs,B,f0);
     
@@ -81,13 +88,7 @@ for i=1:length(t)
         %添加噪声与杂波
         SNR=1; %热噪声信噪比
         response = awgn(response, SNR);
-        %添加杂波信号
-        za=zeros(M,N);
-        %         Z=terrain; %生成地形数据矩阵
-        %         hangza=zabo(B,f0,fs,T,B/T,3,Rmax,Z);
-        for k=1:M
-            za(k,:)=wbfb(1.5,2.2);
-        end
+        
         response = response + (za);
         
         %%%%%%%%%%对差频信号进行二维fft变换%%%%%%%%%
@@ -119,6 +120,7 @@ for i=1:length(t)
         
         %%%%%%%%%%轨迹处理%%%%%%%%%%%
         %当一屏目标数据来临后，轨迹处理的优先顺序：1.轨迹维持 2.创建轨迹 3.创建临时轨迹 4.创建轨迹头
+        
         if (~isempty(track_normal))
             if(~isempty(ones_result))
                 %轨迹维持，取正式轨迹的后三个点进行预测与误差限定

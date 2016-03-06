@@ -12,7 +12,7 @@ gamma=0.6;
 Rs2 = point2(1); %对第二点的距离估计
 Fs2 = point2(3); %对第二点的方位估计
 T1=point2(4)-point1(4); %两点之间的时间差
-Fvs2 = (point2(3) - point1(3))/T1; %对第二点的方位变化速度估计
+%Fvs2 = (point2(3) - point1(3))/T1; %对第二点的方位变化速度估计
 Vs2 = (point2(1) - point1(1))/T1; %对第二点的速度估计
 As2 = (point2(2) - point1(2))/T1;%对第二点的加速度估计
 %上时刻对本时刻预测的作用
@@ -20,22 +20,23 @@ T2=point3(4)-point2(4);
 Rp3 = Rs2 + T2 * Vs2 + T2*T2/2*As2; %对第三点距离的预测
 Vp3 = Vs2+As2*T2; %对第三点速度的预测
 Ap3= As2;%对第三点加速度的预测
-Fp3 = Fs2 + T2*Fvs2;
-Fvp2 = Fvs2;
+%Fp3 = Fs2 + T2*Fvs2;
+%Fvp2 = Fvs2;
 
 %滤波
 Rs3 = Rp3 + alpha*(point3(1) - Rp3);
 Vs3 = Vp3 + beta*(point3(2) - Vp3);
 As3 = Ap3 + gamma*((point3(2)-point2(2))/T2-Ap3);
-Fs3 = Fp3 + alpha*(point3(3) - Fp3);
-Fvs3 = Fvp2 + beta*((point3(3)-point2(3))/T2 - Fvp2);
+%Fs3 = Fp3 + alpha*(point3(3) - Fp3);
+%Fvs3 = Fvp2 + beta*((point3(3)-point2(3))/T2 - Fvp2);
 
 %根据真实数据进行修正
 %对第四点的预测
 T3 = t - point3(4);
 Rp4 = Rs3 + Vs3*T3 + As3*(T3*T3/2);
-Vp4 = Vs3 + As3*T3;
-Fp4 = Fs3 + Fvs3*T3;
-
+%Vp4 = Vs3 + As3*T3;
+%Fp4 = Fs3 + Fvs3*T3;
+Vp4 = point3(2);
+Fp4 = point3(3);
 point = [Rp4 Vp4 Fp4 t];
 end

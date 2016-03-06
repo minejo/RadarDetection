@@ -11,6 +11,6 @@ Vs2 = (point2(1) - point1(1))/T; %对第二点的速度估计
 Fvs2 = (point2(3) - point1(3))/T; %对第二点的方位变化速度估计
 Rp3 = Rs2 + (t - point2(4)) * Vs2; %对第三点距离的预测
 Vp3 = Vs2; %对第三点速度的预测
-Fp3 = Fs2 + (t - point2(3)) * Fvs2; %对第三点的方位的预测
+Fp3 = Fs2; %对第三点的方位的预测
 point = [Rp3 Vp3 Fp3 t];
 end
