@@ -53,7 +53,7 @@ for i=1:length(t)
     [map, R_pre, sita_pre] = updatemap(map, R(i)/0.1, R_pre, sita(i), sita_pre, abs(v(i)));
     %获得回波差频信号
     response=getresponse(map,0.1,angle,search_sita,M,T,Fs,B,f0);
-    
+
     if response
         %添加噪声与杂波
         SNR=1; %热噪声信噪比
@@ -66,7 +66,7 @@ for i=1:length(t)
             za(k,:)=wbfb(1.5,2.2);
         end
         response = response + (za);
-        
+
         %%%%%%%%%%对差频信号进行二维fft变换%%%%%%%%%
         data = after2fft(response, N, Fs, T, B, f0); %二维变换后的矩阵
         data=abs(data);
@@ -74,7 +74,7 @@ for i=1:length(t)
         for i=1:N
             data(1,i)=data(2,i);
         end
-        
+
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
         hasObject = cfarhandled(data,search_sita,deltaR);
 %         x_distance=(linspace(0,Fs*(N-1)/N,N));

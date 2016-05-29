@@ -42,7 +42,7 @@ function [class,type]=dbscan(x,k,Eps)
 
 [m,n]=size(x);
 
-if nargin<3 | isempty(Eps)
+if nargin<3 || isempty(Eps)
    [Eps]=epsilon(x,k);
 end
 
@@ -53,12 +53,12 @@ no=1;
 touched=zeros(m,1);
 
 for i=1:m
-    if touched(i)==0;
+    if touched(i)==0
        ob=x(i,:);
        D=dist(ob(2:n),x(:,2:n));
        ind=find(D<=Eps);
     
-       if length(ind)>1 & length(ind)<k+1       
+       if length(ind)>1 && length(ind)<k+1       
           type(i)=0;
           class(i)=0;
        end
