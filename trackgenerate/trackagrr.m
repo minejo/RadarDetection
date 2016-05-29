@@ -3,23 +3,24 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 close all;
 clear all;
+clc
 %建立多目标运动物体模型
 deltat=0.2;
-t=0:deltat:3;
-
+t=0:deltat:6;
 
 %   物体运动模型设置     %
-
 %[实时速度，实时距离，实时角度] = mbpara(初始距离，初始速度，加速度，初始角度，角度变化加速度，角度变化初始速度, 散射体的距离范围、速度范围、角度范围）
 objectinfo = [
     140, 0, 3, 98, 2, 2, 1, 2, 2;
     70, -4, -3, 50 ,1, 1, 1, 2, 2;
-    130, 2, 2,  90, 1, 2, 2, 2, 2    
+    138, 2, 2,  95, 1, 2, 2, 2, 2    
     ];
 
 n = size(objectinfo, 1);
 [distanceData, velocityData, angleData] = getmultidata(t, objectinfo);
 %plot data
+polar(pi/2,200,'.');
+hold on;
 for i = 1:3*n
     if(mod(i,3) == 1)
         polar(angleData(i,:)/180*pi, distanceData(i,:), '*');
@@ -39,8 +40,8 @@ object = cell(1,length(t)); %每个扫描段的目标凝聚结果
 figure
 for n = 1:length(t)
     X=[distanceData(:,n) [velocityData(:,n) angleData(:,n)]];
-    [class, type] = dbscan(X,2,5);
-    clusternum = class(end);%簇的个数
+    [class, type] = dbscan(X,2,5.3);
+    clusternum = max(class);%簇的个数
     objectnum = size(X,1); %出现目标的个数
     objectcell=cell(1, clusternum); %存放各个簇的cell单元
     objectsize = zeros(1, clusternum);%每个簇的物体大概尺寸
@@ -56,7 +57,7 @@ for n = 1:length(t)
         end
     end
     %更新每个簇的目标大概尺寸，根据k-means方法目标凝聚
-    for i = clusternum:-1:1
+    for i = 1:clusternum
         dis = objectcell{i}(:,1); %取簇中的距离维
         vel = objectcell{i}(:,2); %取簇中的速度维
         angle = objectcell{i}(:,3);%取簇中方位维
@@ -66,7 +67,15 @@ for n = 1:length(t)
         else
             object{n} = [object{n};mean(dis) mean(vel) mean(angle) objectsize];
         end
-        polar(mean(angle)/180*pi ,mean(dis),'*');
+        polar(pi/2,200,'.');
+        hold on;
+        if( mod(i,3) == 1)
+        polar(mean(angle)/180*pi ,mean(dis),'r*');
+        elseif mod(i,3) == 2
+            polar(mean(angle)/180*pi ,mean(dis),'g*');
+        else
+            polar(mean(angle)/180*pi ,mean(dis),'b*');
+        end
         hold on;
     end
 

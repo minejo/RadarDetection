@@ -24,6 +24,5 @@ for i=1:originobnum
     [V(obcount:obcount+2, :), R(obcount:obcount+2, :), SITA(obcount:obcount+2, :)] = mbpara(Ri, Vi, ai, Sitai, Sita_ai, Sita_v0i, t, deltaRi, deltaVi, deltaSitai);
     obcount = obcount + 3;
 end 
-
 end  
 
