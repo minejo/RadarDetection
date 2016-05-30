@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li %%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
 function [ v1, R1, sita1 ] = obmutipoint( R,v, sita, deltaR, deltaV, deltaSita, deltat )
 %模拟一个物体的多点点迹，输入是一个物体的运动模型参数，输出是多个与该点类似的运动模型参数，模拟一个物体的多点模型
 %v是实时速度数组，R是实时距离数组，sita是实时角度数组，deltaR为平均距离误差

@@ -40,7 +40,7 @@ object = cell(1,length(t)); %每个扫描段的目标凝聚结果
 figure
 for n = 1:length(t)
     X=[distanceData(:,n) [velocityData(:,n) angleData(:,n)]];
-    [class, type] = dbscan(X,2,5.3);
+    [class, type] = dbscan(X,2,sqrt(distanceDoor^2+angleDoor^2+velocityDoor^2));
     clusternum = max(class);%簇的个数
     objectnum = size(X,1); %出现目标的个数
     objectcell=cell(1, clusternum); %存放各个簇的cell单元
