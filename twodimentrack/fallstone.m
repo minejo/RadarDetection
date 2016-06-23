@@ -71,8 +71,8 @@ for i=1:length(t)
         data = after2fft(response, N, Fs, T, B, f0); %二维变换后的矩阵
         data=abs(data);
         %去除低频率的杂波与静止物体
-        for i=1:N
-            data(1,i)=data(2,i);
+        for p=1:N
+            data(1,p)=data(2,p);
         end
 
         %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%

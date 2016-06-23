@@ -15,7 +15,7 @@ theta3=5;
 c=3*10^8;
 T=80e-6;           %调频周期10-5秒
 tm=1/B;       %脉冲宽度
-N=fs*T;
+N=floor(fs*T);
 M=T/tm;
 G=100;
 pi=3.1415926;
@@ -40,7 +40,7 @@ a0=RF(1,1);
 RF=RF./a0;
 HW=sqrt(RF);%频域法产生滤波器。
 
-sigmav=q^p/2;
+sigmav=floor(q^p/2);
 v1=rands(sigmav,N);
 V1=fft(v1);
 %W1=conv(HW,V1)
