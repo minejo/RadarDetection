@@ -41,7 +41,7 @@ map=zeros(map_length/map_l, map_width/map_w); %初始map数组，初始化为0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %运动物体设定
-objectNum = 2;
+objectNum = 10;
 %R_init_l = []; %目标的初始横向距离
 %R_init_w = []; %目标的初始纵向距离
 %V_init_l = []; %目标的初始横向速度

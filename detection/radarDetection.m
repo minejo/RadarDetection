@@ -31,3 +31,9 @@ for i = 1:len
        end
     end
 end
+%测试运动模型轨迹路径
+figure
+for index = 1:objectNum
+    plot(prePath{1,index}(1,:),prePath{1,index}(2,:),'*');
+    hold on
+end
