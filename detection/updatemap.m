@@ -7,12 +7,12 @@ function updatemap(index)
 %引用全局变量
 global map VW RL RW map_l map_w  map_length map_width outOfRange R_pre_lmp R_pre_wmp objectNum;
 [x,y]=size(map);
-x_t=1:x;
-y_t=1:y;
+x_t=0:x;
+y_t=0:y;
 for objectindex = 1:objectNum
     map(R_pre_lmp(objectindex),R_pre_wmp(objectindex))=0;%将上一时刻的位置擦除
     if(outOfRange(objectindex) == 0)
-        if(RL(objectindex,index)<=map_length && RW(objectindex,index) <= map_width && RL(objectindex,index)> 1 && RW(objectindex,index) > 1 )
+        if(RL(objectindex,index)<=map_length && RW(objectindex,index) <= map_width && RL(objectindex,index)> 0 && RW(objectindex,index) > 0 )
             RL_nmp=find(x_t<=RL(objectindex,index)/map_l, 1, 'last' );%下一时刻物体的横向距离在map中的坐标
             RW_nmp=find(y_t<=RW(objectindex,index)/map_w, 1, 'last' );%下一时刻物体的纵向距离在map中的坐标
             map(RL_nmp,RW_nmp) = VW(objectindex,index);%写入新位置

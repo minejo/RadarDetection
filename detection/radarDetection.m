@@ -15,7 +15,7 @@ VL = V_init_l*ones(1,len) + A_init_l*t;%横向目标速度时间轴
 VW = V_init_w*ones(1,len) + A_init_w*t;%纵向目标速度时间轴
 RL = R_init_l*ones(1,len) + (V_init_l*t + 0.5*A_init_l*t.^2);
 RW = R_init_w*ones(1,len) + (V_init_w*t + 0.5*A_init_w*t.^2);
-%TDODO:加速度可以在一定范围内浮动
+%TODO:加速度可以在一定范围内浮动
 
 
 %%
@@ -23,6 +23,10 @@ RW = R_init_w*ones(1,len) + (V_init_w*t + 0.5*A_init_w*t.^2);
 global outOfRange;
 outOfRange = zeros(objectNum, 1);
 prePath = cell(1,objectNum);
+%波束相关参数
+big_has_small_num = ceil(big_beam/small_beam); %大波束内包含的小波束个数
+num_l = map_length / big_beam; %大波束横轴扫描次数
+num_w = map_width / big_beam;%大波束纵轴扫描次数
 for i = 1:len
     updatemap(i); %实时更新map
     for index = 1:objectNum
@@ -32,8 +36,9 @@ for i = 1:len
     end
 end
 %测试运动模型轨迹路径
-figure
-for index = 1:objectNum
-    plot(prePath{1,index}(1,:),prePath{1,index}(2,:),'*');
-    hold on
-end
+% figure
+% for index = 1:objectNum
+%     plot(prePath{1,index}(1,:),prePath{1,index}(2,:),'*');
+%     hold on
+% end
+
