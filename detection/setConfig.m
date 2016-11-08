@@ -26,7 +26,7 @@ Vmax=M*deltaV;  %最大不模糊距离
 %%
 %波束赋形相关参数
 T1 = M*T; %单波束驻留时间，波束切换时间不考虑
-big_beam = 8; %大波束的正方形边长
+big_beam = 4; %大波束的正方形边长
 small_beam = 1; %小波束正方形边长
 allow_T = 1.5; %跟踪扫描时全局容忍空白时间(s)
 time_num = 30;%仿真时扫描整个探测区域的次数
@@ -58,8 +58,8 @@ R_pre_wmp = R_init_w/map_w; %对应前一时刻的纵向距离的map坐标
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %点迹聚合与过滤相关参数
-distanceDoor = 4; %距离门
-angleDoor=3; %方位门
+distanceWDoor = 2*deltaR; %纵向距离门设置为两倍的距离分辨率
+distanceLDoor=2*small_beam; %横向距离门默认为小波束分辨率的两倍，当使用大波束扫描时应更改成大波束边长的两倍
 velocityDoor = 2; %速度门
 mintPts = 6; %number of objects in a neighborhood of an object
 
