@@ -56,6 +56,17 @@ for i = 1:len
         %一个整周期扫描结束，开始后续的分析处理
         beamPos_w = 1;
         beamPos_l = 1;
+        if ~isempty(points)
+            %开始点迹凝聚
+            
+            %点迹过滤
+            
+            %得到物体数量，大小
+            
+            %得到整个探测区域的综合点信息
+            
+        end
+    end
 end
 %测试运动模型轨迹路径
 figure

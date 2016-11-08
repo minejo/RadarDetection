@@ -55,5 +55,12 @@ for index = 1:objectNum
 end
 R_pre_lmp = R_init_l/map_l; %对应前一时刻的横向距离的map坐标
 R_pre_wmp = R_init_w/map_w; %对应前一时刻的纵向距离的map坐标
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%点迹聚合与过滤相关参数
+distanceDoor = 4; %距离门
+angleDoor=3; %方位门
+velocityDoor = 2; %速度门
+mintPts = 6; %number of objects in a neighborhood of an object
 
 save simuConfig.mat
