@@ -62,5 +62,8 @@ distanceWDoor = 2*deltaR; %纵向距离门设置为两倍的距离分辨率
 distanceLDoor=2*small_beam; %横向距离门默认为小波束分辨率的两倍，当使用大波束扫描时应更改成大波束边长的两倍
 velocityDoor = 2; %速度门
 mintPts = 6; %number of objects in a neighborhood of an object
-
+%目标跟踪相关参数
+trackObjectNum = 4; %跟踪模式下可以跟踪的最大目标数量
+%目标预警相关参数
+continuousCount = 4; %目标连续几个周期靠近雷达就预警
 save simuConfig.mat
