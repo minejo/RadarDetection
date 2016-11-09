@@ -66,4 +66,8 @@ mintPts = 6; %number of objects in a neighborhood of an object
 trackObjectNum = 4; %跟踪模式下可以跟踪的最大目标数量
 %目标预警相关参数
 continuousCount = 4; %目标连续几个周期靠近雷达就预警
+%小波束连续扫描整个周期的最大数，如果到达次数，需要重新用大波束扫描这个区域，确保其他区域不会出现漏警
+smallScanningNum = 5;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 save simuConfig.mat

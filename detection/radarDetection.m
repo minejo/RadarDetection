@@ -36,6 +36,8 @@ points = []; %保存扫描模式下扫描完整个区域的点迹的一个周期的点迹，分为多行，每行
 object = cell(1, time_num);%保存每个整周期的扫描目标信息，如果一个周期内有多个目标，用多行表示，每行分别为[横向距离 纵向距离 纵向速度]
 integraObject = [];%保存每个大波束扫描整个周期后综合点信息，用多行表示，每行分别为[横向距离 纵向距离 纵向速度]
 isWarning = 0; %判断是否需要预警
+smallScanningCount = 0; %计算小波束扫描完整个区域的次数，大于smallScanningNum时则需要重置为大波束扫描
+BigBeamTrackingObject = []; %大波束跟踪的目标队列
 for i = 1:len
     updatemap(i); %实时更新map
     for index = 1:objectNum
@@ -88,7 +90,7 @@ for i = 1:len
                         if(isempty(object{i}))
                             object{i} = [mean(cludisl) mean(cludisw) mean(cluv) clustersize];
                         else
-                            object{i} = [object{n};mean(cludisl) mean(cludisw) mean(cluv) clustersize];
+                            object{i} = [object{i};mean(cludisl) mean(cludisw) mean(cluv) clustersize];
                         end
                     end
                 end
@@ -99,6 +101,8 @@ for i = 1:len
                 integraV = mean(object{i}(:,3));%整个周期内的所有目标的质心点速度
                 if effectiveNum < trackObjectNum
                     track_flag = 1; %切换到大波束跟踪模式
+                    BigBeamTrackingObject = object{i};%设定需要跟踪的目标
+                    BigBeamTrackingWindow = getBigBeamTrackingWindow(BigBeamTrackingObject);%根据要跟踪的目标，确定大波束的跟踪扫描窗
                 else
                     if isempty(integraObject)
                         integraObject = [integraDisL integraDisW integraV];
@@ -107,14 +111,14 @@ for i = 1:len
                             integraObject = [integraObject;integraDisL integraDisW integraV];%将该综合点信息加入
                             if size(integraObject,1) >= continuousCount %如果连续接近的次数达到设定的门限则预警
                                 isWarning = 1;
-                                fprintf('夭寿啦！异物入侵啦！');
-                                fprintf('夭寿啦！异物入侵啦！');
-                                fprintf('夭寿啦！异物入侵啦！');
+                                fprintf('夭寿啦！异物入侵啦！\n');
+                                fprintf('夭寿啦！异物入侵啦！\n');
+                                fprintf('夭寿啦！异物入侵啦！\n');
                                 %TODO:考虑下画图的事情
                             end
                         else
                             %物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势
-                            integraObject = [integraDisL integraDisW integraV];                            
+                            integraObject = [integraDisL integraDisW integraV];
                         end
                     end
                 end
@@ -122,7 +126,12 @@ for i = 1:len
         end
     else
         if track_flag == 1 %大波束跟踪模式
-            
+           %确定大波束扫描的初始位置
+           
+           %确定扫描窗队列
+           
+           %取出一个扫描窗，进入小波束仔细扫描阶段           
+           track_flag = 2;
         else %小波束扫描模式
             
         end
