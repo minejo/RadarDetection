@@ -38,6 +38,7 @@ integraObject = [];%保存每个大波束扫描整个周期后综合点信息，用多行表示，每行分别
 isWarning = 0; %判断是否需要预警
 smallScanningCount = 0; %计算小波束扫描完整个区域的次数，大于smallScanningNum时则需要重置为大波束扫描
 BigBeamTrackingObject = []; %大波束跟踪的目标队列
+
 for i = 1:len
     updatemap(i); %实时更新map
     for index = 1:objectNum
@@ -102,7 +103,8 @@ for i = 1:len
                 if effectiveNum < trackObjectNum
                     track_flag = 1; %切换到大波束跟踪模式
                     BigBeamTrackingObject = object{i};%设定需要跟踪的目标
-                    BigBeamTrackingWindow = getBigBeamTrackingWindow(BigBeamTrackingObject);%根据要跟踪的目标，确定大波束的跟踪扫描窗
+                    movingTrendL = zeros(1, effectiveNum);%横向移动的趋势，-1为向左，1为向右，默认为0
+                    BigBeamTrackingWindow = getBigBeamTrackingWindow(BigBeamTrackingObject, movingTrendL);%根据要跟踪的目标，确定大波束的跟踪扫描窗
                 else
                     if isempty(integraObject)
                         integraObject = [integraDisL integraDisW integraV];
