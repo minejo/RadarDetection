@@ -16,8 +16,8 @@ end
 objects_l = []; %单波束内所有物体的横坐标，每行代表一个物体
 objects_w = []; %单波束内所有物体的纵坐标，每行代表一个物体
 objects_v = []; %单波束内所有物体的速度，每行代表一个物体
-for i = 1:num_l
-    for j = 1:num_w
+for j = 1:num_w
+    for i = 1:num_l
         index_l = fix((beamPos_l - 1) * num_l + i);
         index_w = fix((beamPos_w - 1) * num_w + j);
         if(map(index_l, index_w) ~= 0)%TODO:改用回波处理算法，目前为了测试

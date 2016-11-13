@@ -29,15 +29,16 @@ prePath = cell(1,objectNum);
 beamPos_w = 1;
 beamPos_l = 1;%波束的位置
 big_has_small_num = ceil(big_beam/small_beam); %大波束内包含的小波束个数
-num_l = map_length / big_beam; %大波束横轴扫描次数
-num_w = map_width / big_beam;%大波束纵轴扫描次数
+num_l = floor(map_length / big_beam); %大波束横轴扫描次数
+num_w = floor(map_width / big_beam);%大波束纵轴扫描次数
 track_flag = 0; %判断是否进入跟踪模式，0为不跟踪，大波束扫描模式，1为大波束跟踪，2为小波束扫描
 points = []; %保存扫描模式下扫描完整个区域的点迹的一个周期的点迹，分为多行，每行分别为[横向距离 纵向距离 纵向速度]
 object = cell(1, time_num);%保存每个整周期的扫描目标信息，如果一个周期内有多个目标，用多行表示，每行分别为[横向距离 纵向距离 纵向速度]
 integraObject = [];%保存每个大波束扫描整个周期后综合点信息，用多行表示，每行分别为[横向距离 纵向距离 纵向速度]
 isWarning = 0; %判断是否需要预警
 smallScanningCount = 0; %计算小波束扫描完整个区域的次数，大于smallScanningNum时则需要重置为大波束扫描
-BigBeamTrackingObject = []; %大波束跟踪的目标队列
+BigBeamTrackingObject = []; %大波束跟踪窗口的目标队列
+SmallPoint = [];
 
 for i = 1:len
     updatemap(i); %实时更新map
@@ -69,7 +70,6 @@ for i = 1:len
                 clusternum = max(class); %聚合后簇的数量
                 objectCell = cell(1, clusternum);%存放各个簇的cell单元
                 objectSize = zeros(1, clusternum); %保存各个簇的大概尺寸，用户后续的点迹过滤
-                
                 
                 %把目标根据dbscan分类后的class变量分别分到对应的cell簇单元中
                 for j = 1:pointsnum
@@ -103,8 +103,8 @@ for i = 1:len
                 if effectiveNum < trackObjectNum
                     track_flag = 1; %切换到大波束跟踪模式
                     BigBeamTrackingObject = object{i};%设定需要跟踪的目标
-                    movingTrendL = zeros(1, effectiveNum);%横向移动的趋势，-1为向左，1为向右，默认为0
-                    BigBeamTrackingWindow = getBigBeamTrackingWindow(BigBeamTrackingObject, movingTrendL);%根据要跟踪的目标，确定大波束的跟踪扫描窗
+                    %TODO: movingTrendL = zeros(1, effectiveNum);%横向移动的趋势，-1为向左，1为向右，默认为0
+                    BigBeamTrackingWindow = getBigBeamTrackingWindow(BigBeamTrackingObject);%根据要跟踪的目标，确定大波束的跟踪扫描窗
                 else
                     if isempty(integraObject)
                         integraObject = [integraDisL integraDisW integraV];
@@ -128,14 +128,35 @@ for i = 1:len
         end
     else
         if track_flag == 1 %大波束跟踪模式
-           %确定大波束扫描的初始位置
-           
-           %确定扫描窗队列
-           
-           %取出一个扫描窗，进入小波束仔细扫描阶段           
-           track_flag = 2;
+            %从跟踪窗序列中确定大波束扫描的位置
+            if ~isempty(BigBeamTrackingWindow)               
+                beamPos_l = BigBeamTrackingWindow(1, 1); %取出参考窗
+                beamPos_w = BigBeamTrackingWindow(1, 2); %取出参考窗
+                BigBeamTrackingWindow(1, :) = [];
+                [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 1);%判断当前波束是否有目标，如果有，记录下点迹
+                if hasObject == 1
+                    track_flag = 2;
+                    SmallBeamTrackingWindow = getSmallBeamScanningWindow(objects_l, objects_w);%根据要跟踪的目标，确定小波束的顺序扫描窗
+                end
+            else
+                %一个跟踪周期扫描完，开始处理数据
+                smallScanningCount = smallScanningCount + 1;
+                if smallScanningCount > smallScanningNum
+                    track_flag = 0; %大于规定的小波束跟踪整个周期的次数，重新用大波束全局扫描
+                else
+                    track_flag = 1; %继续大波束跟踪
+                end
+            end
         else %小波束扫描模式
-            
+            if ~isempty(SmallBeamTrackingWindow)
+                beamPos_l = SmallBeamTrackingWindow(1, 1); %取出参考窗
+                beamPos_w = SmallBeamTrackingWindow(1, 2); %取出参考窗
+                SmallBeamTrackingWindow(1, :) = [];
+                [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 2);%判断当前波束是否有目标，如果有，记录下点迹
+            else
+                %大波束内的小波束全部扫描完，切回到大波束跟踪
+                track_flag = 1;
+            end
         end
     end
 end
