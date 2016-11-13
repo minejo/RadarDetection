@@ -6,8 +6,6 @@
 function BigBeamTrackingWindow = getBigBeamTrackingWindow(BigBeamTrackingObject)
 %BigBeamTrackingObject里面存的是要扫描的多个目标，用多行表示，每行分别为[横向距离 纵向距离 纵向速度]
 %%TODO: movingTrendL表示横向的运动趋势，可以用来减少扫描窗的范围,默认为0，-1向左，1向右
-%disL为目标的平均横向距离
-%disW为目标的平均纵向距离
 %BigBeamTrackingWindow为计算出来的针对每个目标的扫描窗，分为多行，每行分别为[横向波束位置 纵向波束位置]
 global big_beam map_length map_width
 objectNum = size(BigBeamTrackingObject, 1);
