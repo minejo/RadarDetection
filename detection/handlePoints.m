@@ -15,7 +15,7 @@ clusternum = max(class); %聚合后簇的数量
 objectCell = cell(1, clusternum);%存放各个簇的cell单元
 %objectSize = zeros(1, clusternum); %保存各个簇的大概尺寸，用户后续的点迹过滤
 %把目标根据dbscan分类后的class变量分别分到对应的cell簇单元中
-for j = 1:clusternum
+for j = 1:pointsnum
     if isempty(objectCell{class(j)})
         objectCell{class(j)} = points(j,:);
     else
