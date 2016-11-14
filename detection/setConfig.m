@@ -33,28 +33,31 @@ time_num = 30;%仿真时扫描整个探测区域的次数
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %场景模型设计
-map_l = 0.5;%运动模型的分辨率
-map_w = 0.5;
-map_length = 160;%探测区域长度
-map_width = 80;%探测区域宽度
+map_l = 0.3;%运动模型的分辨率
+map_w = 0.3;
+map_length = 90;%探测区域长度
+map_width = 60;%探测区域宽度
 map=zeros(map_length/map_l, map_width/map_w); %初始map数组，初始化为0
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %运动物体设定
-objectNum = 5;
+objectNum = 2;
 %R_init_l = []; %目标的初始横向距离
 %R_init_w = []; %目标的初始纵向距离
 %V_init_l = []; %目标的初始横向速度
 %V_init_w = []; %目标的初始纵向速度
 %A_init_l = []; %目标的初始横向加速度
 %A_init_w = []; %目标的初始纵向加速度
-[R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w] = getRandomInitObject(objectNum, map_length, map_width, deltaR); %采取随机的方式确定以上参数
+[R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w, objectSizeinfo] = getRandomInitObject(objectNum, map_length, map_width, deltaR, map_l, map_w); %采取随机的方式确定以上参数
+figure
+plot(R_init_l, R_init_w, '*');
 %%%%%初始目标在map中的标示%%%%%
-for index = 1:objectNum    
+points_num = size(R_init_l, 1); %所有点迹的数量
+for index = 1:points_num    
       map(fix(R_init_l(index)/map_l), fix(R_init_w(index)/map_w)) = abs(V_init_w(index));   
 end
-R_pre_lmp = R_init_l/map_l; %对应前一时刻的横向距离的map坐标
-R_pre_wmp = R_init_w/map_w; %对应前一时刻的纵向距离的map坐标
+R_pre_lmp = fix(R_init_l/map_l); %对应前一时刻的横向距离的map坐标
+R_pre_wmp = fix(R_init_w/map_w); %对应前一时刻的纵向距离的map坐标
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %点迹聚合与过滤相关参数

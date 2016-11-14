@@ -5,11 +5,11 @@
 function updatemap(index)
 %改变物体的map中映射的位置
 %引用全局变量
-global map VW RL RW map_l map_w  map_length map_width outOfRange R_pre_lmp R_pre_wmp objectNum;
+global map VW RL RW map_l map_w  map_length map_width outOfRange R_pre_lmp R_pre_wmp points_num;
 [x,y]=size(map);
 x_t=0:x;
 y_t=0:y;
-for objectindex = 1:objectNum
+for objectindex = 1:points_num
     map(R_pre_lmp(objectindex),R_pre_wmp(objectindex))=0;%将上一时刻的位置擦除
     if(outOfRange(objectindex) == 0)
         if(RL(objectindex,index)<=map_length && RW(objectindex,index) <= map_width && RL(objectindex,index)> 0 && RW(objectindex,index) > 0 )

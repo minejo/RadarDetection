@@ -5,7 +5,8 @@
 
 function [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, beam_type)
 %判断波束所在方位有无目标，beamPos_l波束横向的位置，beamPos_w波束纵向的位置，beam_type波束的类型，1为大波束，2为小波束
-global map map_l map_w big_beam small_beam deltaR %引用全局变量
+global map map_l map_w big_beam small_beam %引用全局变量
+hasObject = 0;
 if beam_type == 1
     num_l = big_beam / map_l; %大波束内横向有多少个分辨单元
     num_w = big_beam / map_w; %大波束内纵向有多少个分辨单元

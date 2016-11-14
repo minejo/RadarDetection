@@ -2,36 +2,33 @@
 %%% Author: Chao Li %%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-function [R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w] = getRandomInitObject(objectNum, map_length, map_width, deltaR)
-% R_init_l = randi([0.2*map_length 0.8*map_length], objectNum, 1); %目标的初始横向距离
-% R_init_w = randi([0.2*map_width 0.8*map_width], objectNum, 1); %目标的初始纵向距离
-% vmin = -15;
-% vmax = 15;
-% V_init_l = randi([vmin vmax], objectNum, 1); %目标的初始横向速度
-% V_init_w = randi([vmin vmax], objectNum, 1); %目标的初始纵向速度
-% amin = -5;
-% amax = 5;
-% A_init_l = randi([amin amax], objectNum, 1); %目标的初始横向加速度
-% A_init_w = randi([amin amax], objectNum, 1); %目标的初始纵向加速度
-vmin = -15;
-vmax = 15;
-amin = -5;
-amax = 5;
+function [R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w, objectSizeinfo] = getRandomInitObject(objectNum, map_length, map_width, deltaR, map_l, map_w)
+%随机获得N个目标的若干个点迹
+vmin = -10;
+vmax = -1;
+amin = -3;
+amax = 0;
 R_init_l = []; %目标的初始横向距离
 R_init_w = []; %目标的初始纵向距离
 V_init_l = []; %目标的初始横向速度
 V_init_w = []; %目标的初始纵向速度
 A_init_l = []; %目标的初始横向加速度
 A_init_w = []; %目标的初始纵向加速度
+maxIndexL = 0.8*map_length / map_l; %随机取的目标的横坐标的最大范围，避免取到边界的极端情况
+minIndexL = 0.2*map_length / map_l;
+maxIndexW = 0.8*map_width / map_w;
+minIndexW = 0.2*map_width / map_w;
+objectSizeinfo = ones(objectNum, 1);
 for i = 1:objectNum
-   RL = randi([0.2*map_length 0.8*map_length]); %目标的初始横向距离
-   RW = randi([0.2*map_width 0.8*map_width]); %目标的初始纵向距离
+   RL = randi([minIndexL maxIndexL])*map_l; %目标的初始横向距离，取运动模型分辨率的整数倍，确定可以整除
+   RW = randi([minIndexW maxIndexW])*map_w; %目标的初始纵向距离
    VL = randi([vmin vmax]); %目标的初始横向速度
    VW = randi([vmin vmax]); %目标的初始纵向速度
    AL = randi([amin amax]); %目标的初始横向加速度
    AW = randi([amin amax]); %目标的初始纵向加速度
-   objectSize = randi([2 12])*deltaR; %目标大小
-   [R_init_ls, R_init_ws] = getCircleRandomPoints(objectSize, R_init_l, R_init_w, deltaR); %同一个物体的所有距离信息，分为多行，每行分别为[L W]
+   objectSize = randi([1 5])*deltaR; %目标大小
+   objectSizeinfo(i, 1) = objectSize;
+   [R_init_ls, R_init_ws] = getCircleRandomPoints(objectSize, RL, RW, deltaR); %同一个物体的所有距离信息，分为多行，每行分别为[L W]
    pointNum = size(R_init_ls, 1);%该目标的点迹数
    R_init_l = [R_init_l; R_init_ls];
    R_init_w = [R_init_w; R_init_ws];
