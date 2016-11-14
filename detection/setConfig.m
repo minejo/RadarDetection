@@ -4,6 +4,7 @@
 
 %%
 clear
+close all
 clc
 if exist('simuConfig.mat')
 delete simuConfig.mat
@@ -37,7 +38,7 @@ map_l = 0.3;%运动模型的分辨率
 map_w = 0.3;
 map_length = 90;%探测区域长度
 map_width = 60;%探测区域宽度
-map=zeros(map_length/map_l, map_width/map_w); %初始map数组，初始化为0
+map=ones(map_length/map_l, map_width/map_w)*1000; %初始map数组，初始化为1000,一个不可能达到的速度，如果map的位置出现为1000，表示该地方没有目标
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %运动物体设定
@@ -54,7 +55,7 @@ plot(R_init_l, R_init_w, '*');
 %%%%%初始目标在map中的标示%%%%%
 points_num = size(R_init_l, 1); %所有点迹的数量
 for index = 1:points_num    
-      map(fix(R_init_l(index)/map_l), fix(R_init_w(index)/map_w)) = abs(V_init_w(index));   
+      map(fix(R_init_l(index)/map_l), fix(R_init_w(index)/map_w)) = V_init_w(index);   
 end
 R_pre_lmp = fix(R_init_l/map_l); %对应前一时刻的横向距离的map坐标
 R_pre_wmp = fix(R_init_w/map_w); %对应前一时刻的纵向距离的map坐标
