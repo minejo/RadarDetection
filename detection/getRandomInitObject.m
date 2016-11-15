@@ -1,9 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 %%% Author: Chao Li %%%
 %%%%%%%%%%%%%%%%%%%%%%%
-
-function [R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w, objectSizeinfo] = getRandomInitObject(objectNum, map_length, map_width, deltaR, map_l, map_w)
 %随机获得N个目标的若干个点迹
+function [R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w, objectSizeinfo] = getRandomInitObject(objectNum, map_length, map_width, deltaR, map_l, map_w)
 vmin = -10;
 vmax = -1;
 amin = -3;
@@ -27,7 +26,7 @@ for i = 1:objectNum
    AL = randi([amin amax]); %目标的初始横向加速度
    AW = randi([amin amax]); %目标的初始纵向加速度
    objectSize = randi([1 5])*deltaR; %目标大小
-   objectSizeinfo(i, 1) = objectSize;
+   objectSizeinfo(i, 1) = 2*objectSize;
    [R_init_ls, R_init_ws] = getCircleRandomPoints(objectSize, RL, RW, deltaR); %同一个物体的所有距离信息，分为多行，每行分别为[L W]
    pointNum = size(R_init_ls, 1);%该目标的点迹数
    R_init_l = [R_init_l; R_init_ls];
