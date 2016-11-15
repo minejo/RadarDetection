@@ -94,6 +94,10 @@ for i = 1:len
                 integraDisW = mean(object{BigBeamScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
                 integraV = mean(object{BigBeamScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                 fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
+                for k = 1:effectiveNum
+                    fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
+                end
+                
                 if effectiveNum < trackObjectNum
                     fprintf('由于目标数量较少，切换到大波束跟踪模式\n');
                     track_flag = 1; %切换到大波束跟踪模式
@@ -135,17 +139,20 @@ for i = 1:len
                 BigBeamTrackingWindow(1, :) = [];
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 1);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject == 1
+                    fprintf('该大波束内发现%d个点迹\n', size(objects_l,1));
                     for k = 1:size(objects_l,1)
                         fprintf('大波束跟踪发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
                     end
                     fprintf('切换到小波束扫描\n')
                     track_flag = 2;
+                    points = [points ;objects_l objects_w objects_v];%大波束跟踪探测到的点用于辅助判断
                     SmallBeamTrackingWindow = getSmallBeamScanningWindow(objects_l, objects_w);%根据要跟踪的目标，确定小波束的顺序扫描窗
                 end
             else                
                 fprintf('一个跟踪周期扫描完，开始处理数据\n');
                 [objectCell, clusternum] = handlePoints(points, minPts, distanceLDoor, velocityDoor, 2);%小波束点迹聚合处理
                 fprintf('点迹聚合完毕，发现%d个疑似目标\n', clusternum);
+               
                 for j = 1:clusternum
                     cludisl = objectCell{j}(:,1);%取簇中的横向距离维
                     cludisw = objectCell{j}(:,2);%取簇中的纵向距离维
@@ -167,6 +174,9 @@ for i = 1:len
                 integraDisW = mean(trackingobject{smallScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
                 integraV = mean(trackingobject{smallScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                 fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
+                 for k = 1:effectiveNum
+                    fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2), trackingobject{smallScanningCount}(k,3),trackingobject{smallScanningCount}(k,4));
+                end
                 %TODO：画图
                 if effectiveNum > trackObjectNum
                     fprintf('目标数量较多，改为大波束扫描模式\n');
@@ -175,6 +185,7 @@ for i = 1:len
                     points = [];
                 else
                     %继续跟踪模式
+                    fprintf('继续进行大波束跟踪模式\n');
                     if isempty(integraObject)
                         integraObject = [integraDisL integraDisW integraV];
                     else
@@ -189,6 +200,7 @@ for i = 1:len
                             end
                         else
                             %物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势
+                            fprintf('物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势\n');
                             integraObject = [integraDisL integraDisW integraV];
                         end
                     end
@@ -200,6 +212,7 @@ for i = 1:len
                     
                     smallScanningCount = smallScanningCount + 1;
                     if smallScanningCount > smallScanningNum
+                        fprintf('大于规定的小波束跟踪整个周期的次数，重新用大波束全局扫描\n');
                         track_flag = 0; %大于规定的小波束跟踪整个周期的次数，重新用大波束全局扫描
                         beamPos_w = 1; %波束重新初始化
                         beamPos_l = 1;
@@ -216,6 +229,7 @@ for i = 1:len
                 SmallBeamTrackingWindow(1, :) = [];
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 2);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject
+                    fprintf('大波束中的小波束发现%d个点迹\n', size(objects_l,1));
                     for k = 1:size(objects_l,1)
                         fprintf('小波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
                     end
