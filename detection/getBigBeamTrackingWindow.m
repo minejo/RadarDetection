@@ -17,7 +17,7 @@ for i = 1:objectNum
     
     %处理的时候需要考虑极端的情况，比如波束处于左上，左下，右上，右下，还有位于边界情况下的扫描窗情况
     if beamPos_l == 1
-        if beamPos_w == floor(map_width / big_beam) %左下
+        if beamPos_w == 1 %左下
             BigBeamTrackingWindow = [BigBeamTrackingWindow;beamPos_l beamPos_w; beamPos_l+1 beamPos_w];
         else
             BigBeamTrackingWindow = [BigBeamTrackingWindow;beamPos_l beamPos_w;
@@ -27,7 +27,7 @@ for i = 1:objectNum
         end
     else
         if beamPos_l == floor(map_length / big_beam)
-            if beamPos_w == floor(map_width / big_beam) %右下
+            if beamPos_w == 1 %右下
                 BigBeamTrackingWindow = [BigBeamTrackingWindow;beamPos_l beamPos_w; beamPos_l-1 beamPos_w];
             else
                 BigBeamTrackingWindow = [BigBeamTrackingWindow;beamPos_l beamPos_w;
@@ -36,7 +36,7 @@ for i = 1:objectNum
                     beamPos_l-1 beamPos_w-1];
             end
         else%中间的情形
-            if beamPos_w == floor(map_width / big_beam)
+            if beamPos_w == 1
                 BigBeamTrackingWindow = [BigBeamTrackingWindow;beamPos_l-1 beamPos_w; beamPos_l beamPos_w; beamPos_l+1 beamPos_w];
             else
                 BigBeamTrackingWindow = [BigBeamTrackingWindow;beamPos_l-1 beamPos_w; beamPos_l beamPos_w; beamPos_l+1 beamPos_w;
