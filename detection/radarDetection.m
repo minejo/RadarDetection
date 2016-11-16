@@ -106,7 +106,7 @@ for i = 1:len
                 if ~isempty(object{BigBeamScanningCount})
                     effectiveNum = size(object{BigBeamScanningCount},1); %本周期有威胁性的目标数量
                     integraDisL = mean(object{BigBeamScanningCount}(:,1));%整个周期内的所有目标的质心点横向距离
-                    integraDisW = mean(object{BigBeamScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
+                    integraDisW = max(object{BigBeamScanningCount}(:,2));%整个周期内的所有目标的纵向距离最大值
                     integraV = mean(object{BigBeamScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                     fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
                     
@@ -223,7 +223,7 @@ for i = 1:len
                     %得到物体数量，大小，得到整个探测区域的综合点信息
                     effectiveNum = size(trackingobject{smallScanningCount},1); %本周期有威胁性的目标数量
                     integraDisL = mean(trackingobject{smallScanningCount}(:,1));%整个周期内的所有目标的质心点横向距离
-                    integraDisW = mean(trackingobject{smallScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
+                    integraDisW = mean(trackingobject{smallScanningCount}(:,2));%整个周期内的所有目标的纵向距离最大值
                     integraV = mean(trackingobject{smallScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                     fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
                     for k = 1:effectiveNum
