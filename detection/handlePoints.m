@@ -1,3 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li                 %%%
+%%% Email: jonathan.swjtu@gmail.com %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ objectCell, clusternum ] = handlePoints(points, minPts, distanceWDoor, velocityDoor, type)
 %HANDLEPOINTS Summary of this function goes here
 % 根据一个周期收集到的点迹进行集中处理，返回当前周期的物体数量，大小和综合点信息

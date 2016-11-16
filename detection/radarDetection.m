@@ -45,6 +45,9 @@ SmallPoint = [];
 fprintf('开始大波束扫描.....................\n');
 for i = 1:len
     updatemap(i); %实时更新map
+    figure(3)
+    plot(RL(:,i),RW(:,i),'*');
+    axis([0 map_length 0 map_width]);
     for index = 1:points_num
         if outOfRange(index) == 0
             prePath{1,index} = [prePath{1,index} [R_pre_lmp(index)*map_l; R_pre_wmp(index)*map_w]]; %模拟的理论运动模型轨迹
@@ -97,10 +100,20 @@ for i = 1:len
                     integraDisW = mean(object{BigBeamScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
                     integraV = mean(object{BigBeamScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                     fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
-                    for k = 1:effectiveNum
-                        fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
-                    end
+                   
+                    figure(2)
+                    plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
+                    axis([0 map_length 0 map_width]);
+                    figure(1)
+                    plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
+                    axis([0 map_length 0 map_width]);                    
+                    hold on
                     
+                     for k = 1:effectiveNum
+                        fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
+                        plotObject(object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2),object{BigBeamScanningCount}(k,4)/2);
+                     end
+                    pause(0.3);
                     if effectiveNum < trackObjectNum
                         fprintf('由于目标数量较少，切换到大波束跟踪模式\n');
                         track_flag = 1; %切换到大波束跟踪模式
@@ -179,6 +192,14 @@ for i = 1:len
                         end
                     end
                     trackingAllObject = [trackingAllObject trackingobject{smallScanningCount}];
+                    figure(2)
+                    plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');                   
+                    axis([0 map_length 0 map_width]);
+                    figure(1)
+                    plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');                   
+                    axis([0 map_length 0 map_width]);
+                    hold on
+                    
                     %得到物体数量，大小，得到整个探测区域的综合点信息
                     effectiveNum = size(trackingobject{smallScanningCount},1); %本周期有威胁性的目标数量
                     integraDisL = mean(trackingobject{smallScanningCount}(:,1));%整个周期内的所有目标的质心点横向距离
@@ -187,8 +208,9 @@ for i = 1:len
                     fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
                     for k = 1:effectiveNum
                         fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2), trackingobject{smallScanningCount}(k,3),trackingobject{smallScanningCount}(k,4));
+                        plotObject(trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2),trackingobject{smallScanningCount}(k,4)/2);
                     end
-                    
+                    pause(0.3);
                     %TODO：画图
                     if effectiveNum > trackObjectNum
                         fprintf('目标数量较多，改为大波束扫描模式\n');
@@ -267,9 +289,9 @@ for i = 1:len
     end
 end
 %测试运动模型轨迹路径
-figure
-for index = 1:points_num
-    plot(prePath{1,index}(1,:),prePath{1,index}(2,:),'*');
-    hold on
-end
+% figure
+% for index = 1:points_num
+%     plot(prePath{1,index}(1,:),prePath{1,index}(2,:),'*');
+%     hold on
+% end
 
