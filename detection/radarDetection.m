@@ -134,6 +134,8 @@ for i = 1:len
                     fprintf('本扫描周期未发现有威胁性目标\n');
                 end
                 BigBeamScanningCount = BigBeamScanningCount + 1;
+            else
+                fprintf('本大波束扫描周期未发现可疑点迹，all clear!\n');
             end
         end
     else
@@ -156,62 +158,65 @@ for i = 1:len
                 end
             else
                 fprintf('一个跟踪周期扫描完，开始处理数据\n');
-                [objectCell, clusternum] = handlePoints(points, minPts, distanceLDoor, velocityDoor, 2);%小波束点迹聚合处理
-                fprintf('点迹聚合完毕，发现%d个疑似目标\n', clusternum);
-                
-                for j = 1:clusternum
-                    cludisl = objectCell{j}(:,1);%取簇中的横向距离维
-                    cludisw = objectCell{j}(:,2);%取簇中的纵向距离维
-                    cluv = objectCell{j}(:,3);%去簇中的速度维
-                    clustersize = max(cludisw) - min(cludisw);
-                    %将整个周期的分析出来的目标信息和大小信息放入ojbect矩阵
-                    fprintf('点迹过滤，将大小很小的物体滤除，将速度为正的目标剔除\n');
-                    if clustersize > 1 && mean(cluv) < 0
-                        if(isempty(trackingobject{smallScanningCount}))
-                            trackingobject{smallScanningCount} = [mean(cludisl) mean(cludisw) mean(cluv) clustersize];
-                        else
-                            trackingobject{smallScanningCount} = [trackingobject{smallScanningCount};mean(cludisl) mean(cludisw) mean(cluv) clustersize];
+                effectiveNum = 0;
+                if ~isempty(points)
+                    [objectCell, clusternum] = handlePoints(points, minPts, distanceLDoor, velocityDoor, 2);%小波束点迹聚合处理
+                    fprintf('点迹聚合完毕，发现%d个疑似目标\n', clusternum);
+                    
+                    for j = 1:clusternum
+                        cludisl = objectCell{j}(:,1);%取簇中的横向距离维
+                        cludisw = objectCell{j}(:,2);%取簇中的纵向距离维
+                        cluv = objectCell{j}(:,3);%去簇中的速度维
+                        clustersize = max(cludisw) - min(cludisw);
+                        %将整个周期的分析出来的目标信息和大小信息放入ojbect矩阵
+                        fprintf('点迹过滤，将大小很小的物体滤除，将速度为正的目标剔除\n');
+                        if clustersize > 1 && mean(cluv) < 0
+                            if(isempty(trackingobject{smallScanningCount}))
+                                trackingobject{smallScanningCount} = [mean(cludisl) mean(cludisw) mean(cluv) clustersize];
+                            else
+                                trackingobject{smallScanningCount} = [trackingobject{smallScanningCount};mean(cludisl) mean(cludisw) mean(cluv) clustersize];
+                            end
                         end
                     end
-                end
-                trackingAllObject = [trackingAllObject trackingobject{smallScanningCount}];
-                %得到物体数量，大小，得到整个探测区域的综合点信息
-                effectiveNum = size(trackingobject{smallScanningCount},1); %本周期有威胁性的目标数量
-                integraDisL = mean(trackingobject{smallScanningCount}(:,1));%整个周期内的所有目标的质心点横向距离
-                integraDisW = mean(trackingobject{smallScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
-                integraV = mean(trackingobject{smallScanningCount}(:,3));%整个周期内的所有目标的质心点速度
-                fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
-                for k = 1:effectiveNum
-                    fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2), trackingobject{smallScanningCount}(k,3),trackingobject{smallScanningCount}(k,4));
-                end
-                %TODO：画图
-                if effectiveNum > trackObjectNum
-                    fprintf('目标数量较多，改为大波束扫描模式\n');
-                    track_flag = 0;
-                    %相关变量状态的初始化
-                    points = [];
-                else
-                    %继续跟踪模式
-                    fprintf('继续进行大波束跟踪模式\n');
-                    if isempty(integraObject)
-                        integraObject = [integraDisL integraDisW integraV];
-                    else
-                        if integraDisW < integraObject(end, 2) %与上一次的纵向距离比较，如果小于则是物体在接近中
-                            integraObject = [integraObject;integraDisL integraDisW integraV];%将该综合点信息加入
-                            if size(integraObject,1) >= continuousCount %如果连续接近的次数达到设定的门限则预警
-                                isWarning = 2;
-                                fprintf('咦！异物入侵啦！\n');
-                                fprintf('咦！异物入侵啦！\n');
-                                fprintf('咦！异物入侵啦！\n');
-                                %TODO:考虑下画图的事情
-                            end
-                        else
-                            %物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势
-                            fprintf('物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势\n');
-                            integraObject = [integraDisL integraDisW integraV];
-                        end
+                    trackingAllObject = [trackingAllObject trackingobject{smallScanningCount}];
+                    %得到物体数量，大小，得到整个探测区域的综合点信息
+                    effectiveNum = size(trackingobject{smallScanningCount},1); %本周期有威胁性的目标数量
+                    integraDisL = mean(trackingobject{smallScanningCount}(:,1));%整个周期内的所有目标的质心点横向距离
+                    integraDisW = mean(trackingobject{smallScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
+                    integraV = mean(trackingobject{smallScanningCount}(:,3));%整个周期内的所有目标的质心点速度
+                    fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
+                    for k = 1:effectiveNum
+                        fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2), trackingobject{smallScanningCount}(k,3),trackingobject{smallScanningCount}(k,4));
                     end
                     
+                    %TODO：画图
+                    if effectiveNum > trackObjectNum
+                        fprintf('目标数量较多，改为大波束扫描模式\n');
+                        track_flag = 0;
+                        %相关变量状态的初始化
+                        points = [];
+                    else
+                        %继续跟踪模式
+                        fprintf('继续进行大波束跟踪模式\n');
+                        if isempty(integraObject)
+                            integraObject = [integraDisL integraDisW integraV];
+                        else
+                            if integraDisW < integraObject(end, 2) %与上一次的纵向距离比较，如果小于则是物体在接近中
+                                integraObject = [integraObject;integraDisL integraDisW integraV];%将该综合点信息加入
+                                if size(integraObject,1) >= continuousCount %如果连续接近的次数达到设定的门限则预警
+                                    isWarning = 2;
+                                    fprintf('咦！异物入侵啦！\n');
+                                    fprintf('咦！异物入侵啦！\n');
+                                    fprintf('咦！异物入侵啦！\n');
+                                    %TODO:考虑下画图的事情
+                                end
+                            else
+                                %物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势
+                                fprintf('物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势\n');
+                                integraObject = [integraDisL integraDisW integraV];
+                            end
+                        end
+                    end
                     %相关参数初始化
                     points = [];
                     BigBeamTrackingObject = trackingobject{smallScanningCount};%设定新一轮需要跟踪的目标
@@ -229,6 +234,15 @@ for i = 1:len
                     else
                         track_flag = 1; %继续大波束跟踪
                     end
+                else
+                    fprintf('大波束跟踪未发现目标，跟踪丢失，重新用大波束扫描\n');
+                    track_flag = 0;
+                    beamPos_w = 1; %波束重新初始化
+                    beamPos_l = 1;
+                    points = [];
+                    trackingobject = cell(1, smallScanningNum);
+                    smallScanningCount = 1;
+                    BigBeamTrackingWindow = [];
                 end
             end
         else %小波束扫描模式
