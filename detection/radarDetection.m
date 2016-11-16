@@ -48,6 +48,7 @@ for i = 1:len
     figure(3)
     plot(RL(:,i),RW(:,i),'*');
     axis([0 map_length 0 map_width]);
+    title('运动目标原始点迹信息');
     for index = 1:points_num
         if outOfRange(index) == 0
             prePath{1,index} = [prePath{1,index} [R_pre_lmp(index)*map_l; R_pre_wmp(index)*map_w]]; %模拟的理论运动模型轨迹
@@ -116,11 +117,12 @@ for i = 1:len
                         plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'b*');
                     end
                     axis([0 map_length 0 map_width]);
+                    title('分析处理后目标实时运动信息');
                     figure(1)
                     plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
                     axis([0 map_length 0 map_width]);
                     hold on
-                    
+                    title('分析处理后运动轨迹');
                     for k = 1:effectiveNum
                         fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
                         plotObject(object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2),object{BigBeamScanningCount}(k,4)/2);
@@ -212,6 +214,7 @@ for i = 1:len
                         plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
                     end
                     axis([0 map_length 0 map_width]);
+                    title('分析处理后目标实时运动信息');
                     figure(1)
                     plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
                     axis([0 map_length 0 map_width]);
