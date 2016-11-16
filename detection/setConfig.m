@@ -65,13 +65,15 @@ R_pre_wmp = fix(R_init_w/map_w); %对应前一时刻的纵向距离的map坐标
 distanceWDoor = 2*deltaR; %纵向距离门设置为两倍的距离分辨率
 distanceLDoor=2*small_beam; %横向距离门默认为小波束分辨率的两倍，当使用大波束扫描时应更改成大波束边长的两倍
 velocityDoor = 2; %速度门
-minPts = 5; %number of objects in a neighborhood of an object
+minPts = 6; %number of objects in a neighborhood of an object
 %目标跟踪相关参数
 trackObjectNum = 4; %跟踪模式下可以跟踪的最大目标数量
 %目标预警相关参数
 continuousCount = 3; %目标连续几个周期靠近雷达就预警
 %小波束连续扫描整个周期的最大数，如果到达次数，需要重新用大波束扫描这个区域，确保其他区域不会出现漏警
 smallScanningNum = 4;
-
+maxPointsNum = 1000; %一个周期设定的点迹数量上限，探测到的点迹超过这个上限直接预警，很有可能直接发生了泥石流
+maxObjectSize = 10;%点击聚合后如果有物体体积大于这个上限，可直接预警
+minObjectSize = 1;%小于这个界限的物体可认为没有威胁吧
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 save simuConfig.mat

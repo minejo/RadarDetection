@@ -9,11 +9,12 @@ function [ objectCell, clusternum ] = handlePoints(points, minPts, distanceWDoor
 %velocityDoor为DBSCAN聚合用的参数，type为波束的类型，1为大波束，2为小波束
 global big_beam small_beam
 pointsnum = size(points, 1); %所有点迹的个数
+
 %开始点迹凝聚
 if type == 1
-    [class, type] = dbscan(points, minPts, sqrt(distanceWDoor^2 + (big_beam)^2 + velocityDoor^2));
+    [class, type] = dbscan(points, minPts, sqrt(distanceWDoor^2 + (big_beam/2)^2 + velocityDoor^2));
 else
-    [class, type] = dbscan(points, minPts, sqrt(distanceWDoor^2 + (small_beam)^2 + velocityDoor^2));
+    [class, type] = dbscan(points, minPts, sqrt(distanceWDoor^2 + (small_beam/2)^2 + velocityDoor^2));
 end
 clusternum = max(class); %聚合后簇的数量
 objectCell = cell(1, clusternum);%存放各个簇的cell单元

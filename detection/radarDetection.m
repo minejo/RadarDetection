@@ -74,6 +74,10 @@ for i = 1:len
             beamPos_w = 1;
             beamPos_l = 1;
             if ~isempty(points)
+                if size(points,1) > maxPointsNum
+                    isWarning = 1;
+                    fprintf('哇，好多点迹啊，肯定发生泥石流了,先跑再说！\n');
+                end
                 [objectCell, clusternum] = handlePoints(points, minPts, distanceLDoor, velocityDoor, 1);%大波束点迹聚合处理
                 fprintf('点迹聚合完毕，发现%d个疑似目标\n', clusternum);
                 %更新每个簇的目标大概尺寸，根据平均值方法计算
@@ -84,7 +88,11 @@ for i = 1:len
                     clustersize = max(cludisw) - min(cludisw);
                     %将整个周期的分析出来的目标信息和大小信息放入ojbect矩阵
                     fprintf('点迹过滤，将大小很小的物体滤除，将速度为正的目标剔除\n');
-                    if clustersize > 1 && mean(cluv) < 0
+                    if clustersize > minObjectSize && mean(cluv) < 0
+                        if clustersize > maxObjectSize
+                            isWarning = 1;
+                            fprintf('出现了一个好大的物体啊，有危险，需要预警下\n');
+                        end
                         if(isempty(object{BigBeamScanningCount}))
                             object{BigBeamScanningCount} = [mean(cludisl) mean(cludisw) mean(cluv) clustersize];
                         else
@@ -100,19 +108,23 @@ for i = 1:len
                     integraDisW = mean(object{BigBeamScanningCount}(:,2));%整个周期内的所有目标的质心点纵向距离
                     integraV = mean(object{BigBeamScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                     fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
-                   
+                    
                     figure(2)
-                    plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
+                    if isWarning == 1
+                        plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
+                    else
+                        plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'b*');
+                    end
                     axis([0 map_length 0 map_width]);
                     figure(1)
                     plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
-                    axis([0 map_length 0 map_width]);                    
+                    axis([0 map_length 0 map_width]);
                     hold on
                     
-                     for k = 1:effectiveNum
+                    for k = 1:effectiveNum
                         fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
                         plotObject(object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2),object{BigBeamScanningCount}(k,4)/2);
-                     end
+                    end
                     pause(0.3);
                     if effectiveNum < trackObjectNum
                         fprintf('由于目标数量较少，切换到大波束跟踪模式\n');
@@ -139,6 +151,7 @@ for i = 1:len
                                 end
                             else
                                 %物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势
+                                isWarning = 0;
                                 integraObject = [integraDisL integraDisW integraV];
                             end
                         end
@@ -193,10 +206,14 @@ for i = 1:len
                     end
                     trackingAllObject = [trackingAllObject trackingobject{smallScanningCount}];
                     figure(2)
-                    plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');                   
+                    if isWarning == 2
+                        plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), 'g*');
+                    else
+                        plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
+                    end
                     axis([0 map_length 0 map_width]);
                     figure(1)
-                    plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');                   
+                    plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
                     axis([0 map_length 0 map_width]);
                     hold on
                     
@@ -236,6 +253,7 @@ for i = 1:len
                                 %物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势
                                 fprintf('物体出现远离的趋势，将之前的趋势清除，重新开始计算趋势\n');
                                 integraObject = [integraDisL integraDisW integraV];
+                                isWarning = 0;
                             end
                         end
                     end
@@ -259,6 +277,7 @@ for i = 1:len
                 else
                     fprintf('大波束跟踪未发现目标，跟踪丢失，重新用大波束扫描\n');
                     track_flag = 0;
+                    isWarning = 0;
                     beamPos_w = 1; %波束重新初始化
                     beamPos_l = 1;
                     points = [];
@@ -295,3 +314,4 @@ end
 %     hold on
 % end
 
+ 
