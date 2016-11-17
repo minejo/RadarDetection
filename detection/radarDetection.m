@@ -79,7 +79,7 @@ for i = 1:len
                     isWarning = 1;
                     fprintf('哇，好多点迹啊，肯定发生泥石流了,先跑再说！\n');
                 end
-                [objectCell, clusternum] = handlePoints(points, minPts, distanceLDoor, velocityDoor, 1);%大波束点迹聚合处理
+                [objectCell, clusternum] = handlePoints(points, minPts, distanceWDoor, velocityDoor, parameterWeight, 1);%大波束点迹聚合处理
                 fprintf('点迹聚合完毕，发现%d个疑似目标\n', clusternum);
                 %更新每个簇的目标大概尺寸，根据平均值方法计算
                 for j = 1:clusternum
@@ -190,7 +190,7 @@ for i = 1:len
                 fprintf('一个跟踪周期扫描完，开始处理数据\n');
                 effectiveNum = 0;
                 if ~isempty(points)
-                    [objectCell, clusternum] = handlePoints(points, minPts, distanceLDoor, velocityDoor, 2);%小波束点迹聚合处理
+                    [objectCell, clusternum] = handlePoints(points, minPts, distanceWDoor, velocityDoor, parameterWeight, 2);%小波束点迹聚合处理
                     fprintf('点迹聚合完毕，发现%d个疑似目标\n', clusternum);
                     
                     for j = 1:clusternum

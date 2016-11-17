@@ -2,7 +2,7 @@
 %%% Author: Chao Li                 %%%
 %%% Email: jonathan.swjtu@gmail.com %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ objectCell, clusternum ] = handlePoints(points, minPts, distanceWDoor, velocityDoor, type)
+function [ objectCell, clusternum ] = handlePoints(points, minPts, distanceWDoor, velocityDoor, parameterWeight, type)
 %HANDLEPOINTS Summary of this function goes here
 % 根据一个周期收集到的点迹进行集中处理，返回当前周期的物体数量，大小和综合点信息
 %points为所有的点迹信息，minPts，distanceLDoor,
@@ -12,9 +12,9 @@ pointsnum = size(points, 1); %所有点迹的个数
 
 %开始点迹凝聚
 if type == 1
-    [class, type] = dbscan(points, minPts, sqrt(distanceWDoor^2 + (big_beam*0.8)^2 + velocityDoor^2));
+    [class, type] = dbscan(points, minPts, sqrt(([distanceWDoor (big_beam*0.8)  velocityDoor].^2) * parameterWeight'), parameterWeight);
 else
-    [class, type] = dbscan(points, minPts, sqrt(distanceWDoor^2 + (small_beam*0.8)^2 + velocityDoor^2));
+    [class, type] = dbscan(points, minPts,  sqrt(([distanceWDoor (small_beam*0.8)  velocityDoor].^2) * parameterWeight'), parameterWeight);
 end
 clusternum = max(class); %聚合后簇的数量
 if clusternum ~= -1
