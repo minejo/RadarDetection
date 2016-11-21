@@ -1,3 +1,8 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li                 %%%
+%%% Email: jonathan.swjtu@gmail.com %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function hasObject = scfar(data,value,alpha,beta1,beta2,Nt)
 %data为要检测的数组，i为要检测的单元，N为检测单元两边的比较单元数，r为保护单元数，Pf为虚警概率
 S0=[];

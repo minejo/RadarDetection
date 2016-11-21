@@ -45,13 +45,13 @@ if response
     end
     response = response + (za);
     %%%%%%%%%%对差频信号进行二维fft变换%%%%%%%%%
-    data = after2fft(response, N, Fs, T, B, f0); %二维变换后的矩阵
+    data = after2fft(response); %二维变换后的矩阵
     data=abs(data);
     %去除低频率的杂波与静止物体
     for p=1:N
         data(1,p)=data(2,p);
     end
     %%%%%%%%%%%%%CFAR处理%%%%%%%%%%%%%%%
-    hasObject = cfarhandled(data,search_sita,deltaR);
+    [hasObject, objects_l, objects_w, objects_v] = cfarhandled(data,beamPos_l, beamPos_w, beam_type);
 end
 end

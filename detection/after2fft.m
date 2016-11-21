@@ -1,14 +1,13 @@
-%%%%%%%%%%%%%%%%%%%%%%%
-%%% Author: Chao Li %%%
-%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li                 %%%
+%%% Email: jonathan.swjtu@gmail.com %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function fft2 =after2fft(response,N,fs,T,B,f0)
+function fft2 =after2fft(response)
 %返回二维fft变换后的矩阵
-c=3e8;
-M=size(response,1); %积累周期
+global N fs T B f0 M c
 fft1=zeros(M,N);
 fft2=zeros(M,N);
-
 
 %一维fft变换
 for k=1:M

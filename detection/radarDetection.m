@@ -7,7 +7,7 @@ close all;
 clear all;
 clc;
 %全局变量设置
-global T f0 B Fs N M RCS
+global T f0 B Fs N M RCS c
 global map VW RL RW map_l map_w map_length map_width R_pre_lmp R_pre_wmp objectNum big_beam small_beam deltaR points_num;
 load('simuConfig.mat');%导入雷达参数配置文件
 fprintf('加载参数完毕\n');
