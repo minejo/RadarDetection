@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 close all;
-clear all;
+clear;
 clc;
 %全局变量设置
 global T f0 B Fs N M RCS c alpha beta scfar_r

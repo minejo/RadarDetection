@@ -5,7 +5,7 @@
 
 function  [hasObject, objects_l, objects_w, objects_v] = cfarhandled(data, beamPos_l, beamPos_w, beam_type)
 %通过距离维与速度维各做一次cacfar，综合判断是否出现目标
-global M N CFAR_N_l CFAR_N_w window_r deltaR deltaV big_beam small_beam Rmax T f0 c
+global M N CFAR_N_l CFAR_N_w window_r deltaR deltaV big_beam small_beam Rmax T f0 c Pfa
 objects_l = []; %单波束内所有物体的横坐标，每行代表一个物体
 objects_w = []; %单波束内所有物体的纵坐标，每行代表一个物体
 objects_v = []; %单波束内所有物体的速度，每行代表一个物体
@@ -15,6 +15,7 @@ for i = 1:M
     for j = 1:N/2
         %速度维cfar
         referWindow_w = [];
+        value = data(i,j);
         if(i>(CFAR_N_w/2+window_r) && i <= (M-CFAR_N_w/2-window_r))
             referWindow_w=[data(i-CFAR_N_w/2-window_r:i-window_r-1,j)' data(i+window_r+1:i+CFAR_N_w/2+window_r,j)'];
         elseif (i==1 || i ==2)
@@ -26,10 +27,10 @@ for i = 1:M
         elseif( i==M || i==M-1)
             referWindow_w=data(i-CFAR_N_w-window_r:i-window_r-1,j)';
         end
-        hasObject_w = scfar(referWindow_w, data(i, j));
+        hasObject_w = gocfar(referWindow_w, value, Pfa^(-1/(length(referWindow_w)/2))-1);
         %距离维cfar
         referWindow_l = [];
-        if(j>(CFAR_N_l/2+1)&&j<=N-CFAR_N_l/2-1)
+        if(j>(CFAR_N_l/2+window_r)&&j<=N-CFAR_N_l/2-window_r)
             referWindow_l=[data(i,j-CFAR_N_l/2-window_r:j-window_r-1) data(i,j+window_r+1:j+CFAR_N_l/2+window_r)];
         elseif (j==1 || j ==2)
             referWindow_l=data(i,j+window_r+1:j+CFAR_N_l+window_r);
@@ -41,7 +42,7 @@ for i = 1:M
             referWindow_l=data(i,j-CFAR_N_l-window_r:j-window_r-1);
         end
        % [hasObject_l, choice] = vicfar(referWindow_l, data(i, j));
-       hasObject_l = scfar(referWindow_l, data(i, j));
+       [hasObject_l, choice] = vicfar(referWindow_l, value);
         %%%%%%%%%%%%%%%%判断该点是否是顶点%%%%%%%%%%%%%%%%%%%%
        % isTop=1;
 %         if(i>1&&i<M&&j>1&&j<N/2)
