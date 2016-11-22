@@ -7,8 +7,9 @@ close all;
 clear all;
 clc;
 %全局变量设置
-global T f0 B Fs N M RCS c
-global map VW RL RW map_l map_w map_length map_width R_pre_lmp R_pre_wmp objectNum big_beam small_beam deltaR points_num;
+global T f0 B Fs N M RCS c alpha beta scfar_r
+global CFAR_N_l CFAR_N_w window_r KVI KMR Pfa
+global map VW RL RW map_l map_w map_length map_width R_pre_lmp R_pre_wmp objectNum big_beam small_beam deltaR deltaV points_num Rmax;
 load('simuConfig.mat');%导入雷达参数配置文件
 fprintf('加载参数完毕\n');
 Tb = map_length*map_width/(big_beam*big_beam)*T1; %大波束扫描完整个区域的时间
@@ -16,8 +17,8 @@ t = 0:T1:time_num*Tb; %时间轴
 len = size(t,2);
 VL = V_init_l*ones(1,len) + A_init_l*t;%横向目标速度时间轴
 VW = V_init_w*ones(1,len) + A_init_w*t;%纵向目标速度时间轴
-RL = R_init_l*ones(1,len) + (V_init_l*t + 0.5*A_init_l*t.^2);%横向目标距离时间轴
-RW = R_init_w*ones(1,len) + (V_init_w*t + 0.5*A_init_w*t.^2);%纵向目标距离时间轴
+RL = R_init_l*ones(1,len) - (V_init_l*t + 0.5*A_init_l*t.^2);%横向目标距离时间轴
+RW = R_init_w*ones(1,len) - (V_init_w*t + 0.5*A_init_w*t.^2);%纵向目标距离时间轴
 %TODO:加速度可以在一定范围内浮动
 
 
@@ -90,7 +91,7 @@ for i = 1:len
                     clustersize = max(cludisw) - min(cludisw);
                     %将整个周期的分析出来的目标信息和大小信息放入ojbect矩阵
                     fprintf('点迹过滤，将大小很小的物体滤除，将速度为正的目标剔除\n');
-                    if clustersize > minObjectSize && mean(cluv) < 0
+                    if clustersize > minObjectSize && mean(cluv) > 0
                         if clustersize > maxObjectSize
                             isWarning = 1;
                             fprintf('出现了一个好大的物体啊，有危险，需要预警下\n');
@@ -128,7 +129,7 @@ for i = 1:len
                         fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
                         plotObject(object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2),object{BigBeamScanningCount}(k,4)/2);
                     end
-                    pause(0.1);
+                    %pause(0.1);
                     if effectiveNum < trackObjectNum
                         fprintf('由于目标数量较少，切换到大波束跟踪模式\n');
                         track_flag = 1; %切换到大波束跟踪模式
@@ -201,7 +202,7 @@ for i = 1:len
                         clustersize = max(cludisw) - min(cludisw);
                         %将整个周期的分析出来的目标信息和大小信息放入ojbect矩阵
                         fprintf('点迹过滤，将大小很小的物体滤除，将速度为正的目标剔除\n');
-                        if clustersize > 1 && mean(cluv) < 0
+                        if clustersize > 1 && mean(cluv) > 0
                             if(isempty(trackingobject{smallScanningCount}))
                                 trackingobject{smallScanningCount} = [mean(cludisl) mean(cludisw) mean(cluv) clustersize];
                             else
@@ -234,7 +235,7 @@ for i = 1:len
                             fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2), trackingobject{smallScanningCount}(k,3),trackingobject{smallScanningCount}(k,4));
                             plotObject(trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2),trackingobject{smallScanningCount}(k,4)/2);
                         end
-                        pause(0.1);
+                        %pause(0.1);
                         %TODO：画图
                         if effectiveNum > trackObjectNum
                             fprintf('目标数量较多，改为大波束扫描模式\n');

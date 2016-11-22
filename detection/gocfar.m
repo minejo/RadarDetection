@@ -12,7 +12,7 @@ hasObject=0;
 
 left=sum(refer(1:N/2));
 right=sum(refer(N/2+1:N));
-juage=max(left,right)*K;
+juage=min(left,right)*K;
 if(value>juage)
     hasObject=1;
 end

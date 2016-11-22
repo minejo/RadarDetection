@@ -82,7 +82,7 @@ minObjectSize = 1;%小于这个界限的物体可认为没有威胁吧
 %恒虚警相关参数
 alpha = 0.5;%s-cfar参数
 beta = 22.5;%s-cfar参数
-scfar_r = 1;%容忍目标的个数
+scfar_r = 8;%容忍目标的个数
 KVI = 4.56; %svi-cfar方法判断均匀性参数
 KMR = 2.9; %svi-cfar方法判断均匀性参数
 CFAR_N_l = 24;%横向参考窗长度

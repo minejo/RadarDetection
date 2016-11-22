@@ -3,10 +3,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 %随机获得N个目标的若干个点迹
 function [R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w, objectSizeinfo] = getRandomInitObject(objectNum, map_length, map_width, deltaR, map_l, map_w)
-vmin = -6;
-vmax = -1;
-amin = -2;
-amax = 0;
+vmin = 1;
+vmax = 10;
+amin = 0;
+amax = 3;
 R_init_l = []; %目标的初始横向距离
 R_init_w = []; %目标的初始纵向距离
 V_init_l = []; %目标的初始横向速度

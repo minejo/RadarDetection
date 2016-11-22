@@ -3,7 +3,7 @@
 %%% Email: jonathan.swjtu@gmail.com %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [ hasObject, choice ] = vicfar( refer,value)
+function [ hasObject, choice ] = vicfar(refer,value)
 %refer 为参考单元数据，value为有数据的点 ,KVI统计量VI阀值门限，统计量MR阀值门限
 global KVI KMR Pfa
 N=length(refer); %参考单元长度
@@ -45,17 +45,17 @@ if(isAve_before==1 && isAve_after==1 && HasSameAve==0)
 end
 %选用第三种策略
 if(isAve_before==0 && isAve_after==1)
-    hasObject=cacfar(refer(N/2+1:N),value,CN2);
+    hasObject=scfar(refer,value);
     choice=3;
 end
 %选用第四种策略
 if(isAve_before==1 && isAve_after==0)
-    hasObject=cacfar(refer(1:N/2),value,CN2);
+    hasObject=scfar(refer,value);
     choice=4;
 end
 %选用第五种策略
 if(isAve_before==0 && isAve_after==0)
-    hasObject=socfar(refer,value,CN2);
+    hasObject=scfar(refer,value);
     choice=5;
 end
 
