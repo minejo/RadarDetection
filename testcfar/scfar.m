@@ -5,8 +5,8 @@
 
 function hasObject = scfar(refer,value)
 %data为要检测的数组，i为要检测的单元，N为检测单元两边的比较单元数，r为保护单元数，Pf为虚警概率
-global alpha beta 
-%beta = 15;
+alpha = 0.5;
+beta = 22.5;
 beta1 = beta;
 beta2 = beta;
 S0=[];

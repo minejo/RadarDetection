@@ -5,7 +5,7 @@
 
 function [hasObject] = gocfar(refer,value, K)
 %data为要检测的数组，i为要检测的单元，N为检测单元两边的比较单元数
-global Pfa
+%global Pfa
 N = length(refer);
 %K=(Pfa)^(-1/(N/2))-1;
 hasObject=0;

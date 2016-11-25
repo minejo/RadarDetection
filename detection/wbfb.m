@@ -3,19 +3,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 
 function za=wbfb(p,q)
-fs=25e6;
-ts=1/fs;
+global T Fs
+%Fs=25e6;
+ts=1/Fs;
 p=1.5;
 q=2.2;
 h=60; %铁塔高60米
-R=150;
+R=90;
 B=10e6;           %带宽100MHz
 thetar=asin(h/R);
 theta3=5;
 c=3*10^8;
 T=80e-6;           %调频周期10-5秒
 tm=1/B;       %脉冲宽度
-N=floor(fs*T);
+N=floor(Fs*T);
 M=T/tm;
 G=100;
 pi=3.1415926;
@@ -102,7 +103,7 @@ end
 %   fft1(r,:)=abs(fft(d(r,:),N));
 % end
 %
-% distance=(linspace(-fs/2,fs/2,N));
+% distance=(linspace(-Fs/2,Fs/2,N));
 % figure;
 % plot(distance,fftshift(fft1(1,:)));
 % x1=0:N-1;

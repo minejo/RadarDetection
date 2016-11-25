@@ -18,7 +18,7 @@ B=500e6; %·¢Éä»úµ÷Æµ´ø¿í
 deltaR=c/(2*B); %¶şÎ¬±ä»»ºóµÄ¾àÀë·Ö±æÂÊ
 deltaV=2; %¶şÎ¬±ä»»ºóËÙ¶ÈÎ¬·Ö±æÂÊ
 %%%%%%%%%È·¶¨·Ö±æÂÊ%%%%%%%%%%%%%%
-Rmax=300; %×î´ó´¦Àí¾àÀë
+Rmax=90; %×î´ó´¦Àí¾àÀë
 Fs=4*B*Rmax/(T*c); %²îÆµĞÅºÅ²ÉÑùÂÊ
 N=round(Fs*T); %¾àÀëÎ¬²ÉÑùµãÊı
 M=fix(c/(deltaV*2*T*f0)); %ËÙ¶ÈÎ¬²ÉÑùµãÊı
@@ -43,7 +43,7 @@ map=ones(map_length/map_l, map_width/map_w)*1000; %³õÊ¼mapÊı×é£¬³õÊ¼»¯Îª1000,Ò»¸
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %ÔË¶¯ÎïÌåÉè¶¨
-objectNum = 6;
+objectNum = 2;
 %R_init_l = []; %Ä¿±êµÄ³õÊ¼ºáÏò¾àÀë
 %R_init_w = []; %Ä¿±êµÄ³õÊ¼×İÏò¾àÀë
 %V_init_l = []; %Ä¿±êµÄ³õÊ¼ºáÏòËÙ¶È
@@ -53,6 +53,7 @@ objectNum = 6;
 [R_init_l, R_init_w, V_init_l, V_init_w, A_init_l, A_init_w, objectSizeinfo] = getRandomInitObject(objectNum, map_length, map_width, deltaR, map_l, map_w); %²ÉÈ¡Ëæ»úµÄ·½Ê½È·¶¨ÒÔÉÏ²ÎÊı
 figure
 plot(R_init_l, R_init_w, '*');
+axis([0 map_length 0 map_width]);
 %%%%%³õÊ¼Ä¿±êÔÚmapÖĞµÄ±êÊ¾%%%%%
 points_num = size(R_init_l, 1); %ËùÓĞµã¼£µÄÊıÁ¿
 for index = 1:points_num    
@@ -66,7 +67,7 @@ R_pre_wmp = fix(R_init_w/map_w); %¶ÔÓ¦Ç°Ò»Ê±¿ÌµÄ×İÏò¾àÀëµÄmap×ø±ê
 distanceWDoor = deltaR; %×İÏò¾àÀëÃÅÉèÖÃÎªÁ½±¶µÄ¾àÀë·Ö±æÂÊ
 %distanceLDoor=2*small_beam; %ºáÏò¾àÀëÃÅÄ¬ÈÏÎªĞ¡²¨Êø·Ö±æÂÊµÄÁ½±¶£¬µ±Ê¹ÓÃ´ó²¨ÊøÉ¨ÃèÊ±Ó¦¸ü¸Ä³É´ó²¨Êø±ß³¤µÄÁ½±¶
 velocityDoor = 1; %ËÙ¶ÈÃÅ
-minPts = 6; %number of objects in a neighborhood of an object
+minPts = 4; %number of objects in a neighborhood of an object
 parameterWeight = [0.2 0.4 0.4];%¼ÆËãÅ·¼¸ÀïµÃÊ±µÄÈ¨ÖØ£¬·Ö±ğ¶ÔÓ¦[ºáÏò¾àÀë ×İÏò¾àÀë ×İÏòËÙ¶È]
 %Ä¿±ê¸ú×ÙÏà¹Ø²ÎÊı
 trackObjectNum = 3; %¸ú×ÙÄ£Ê½ÏÂ¿ÉÒÔ¸ú×ÙµÄ×î´óÄ¿±êÊıÁ¿

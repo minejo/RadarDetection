@@ -25,5 +25,16 @@ for j = 1:num_w
         end
     end
 end
+%for test
+% for j = 1:size(map,2)
+%     for i = 1:size(map, 1)
+%         %index_l = fix((beamPos_l - 1) * num_l + i);
+%         %index_w = fix((beamPos_w - 1) * num_w + j);
+%         if(map(i, j) ~= 1000)%TODO:改用回波处理算法，目前为了测试
+%             fprintf('理论点迹(%f,%f),速度为%f\n', i*map_l, j*map_w, map(i, j));
+%             response = response + getdisg(j * map_w, (map(i, j)));
+%         end
+%     end
+% end
 
 end

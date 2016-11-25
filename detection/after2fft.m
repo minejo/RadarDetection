@@ -5,7 +5,7 @@
 
 function fft2 =after2fft(response)
 %返回二维fft变换后的矩阵
-global N fs T B f0 M c
+global N Fs T B f0 M c
 fft1=zeros(M,N);
 fft2=zeros(M,N);
 
@@ -18,8 +18,9 @@ end
 for i=1:N
     fft2(:,i) = fft(fft1(:,i),M);
 end
-% x_distance=(linspace(0,fs*(N-1)/N,N));
-% y_velocity=linspace(0, 1/T*(M-1)/M, M);
+
+% x_distance=(linspace(0,Fs,N));
+% y_velocity=linspace(0, 1/T, M);
 % meshx=x_distance(1:N/2)*c/(2*B/T);
 % figure;
 % mesh(meshx,c*y_velocity/(2*f0),(abs(fft2(:,1:N/2))));
@@ -29,7 +30,7 @@ end
 % figure;
 % subplot(211)
 % test=abs((fft1(1,:)));
-% plot(linspace(0,fs,N)*c/(2*B/T),test);
+% plot(linspace(0,Fs,N)*c/(2*B/T),test);
 % title('理想回波信号的一维频谱仿真图');
 % xlabel('距离/m');
 % ylabel('幅度');
@@ -43,7 +44,7 @@ end
 % xlabel('积累周期k');
 % ylabel('相位角度');
 % legend('实部','虚部');
-%figure resize
+% %figure resize
 % set(gcf,'Position',[100 100 260 220]);
 % set(gca,'Position',[.13 .17 .80 .74]);  %调整 XLABLE和YLABLE不会被切掉
 % figure_FontSize=8;
@@ -51,10 +52,10 @@ end
 % set(get(gca,'YLabel'),'FontSize',figure_FontSize,'Vertical','middle');
 % set(findobj('FontSize',10),'FontSize',figure_FontSize);
 % set(findobj(get(gca,'Children'),'LineWidth',0.5),'LineWidth',2);
-
+% 
 % figure;
 % test=abs((fft1(1,:)));
-% plot(linspace(0,fs,N)*c/(2*B/T),test);
+% plot(linspace(0,Fs,N)*c/(2*B/T),test);
 % title('复杂回波信号的一维频谱仿真图');
 % xlabel('距离/m');
 % ylabel('幅度');

@@ -47,7 +47,7 @@ SmallPoint = [];
 fprintf('开始大波束扫描.....................\n');
 for i = 1:len
     updatemap(i); %实时更新map
-    figure(3)
+    figure(1)
     plot(RL(:,i),RW(:,i),'*');
     axis([0 map_length 0 map_width]);
     title('运动目标原始点迹信息');
@@ -120,7 +120,7 @@ for i = 1:len
                     end
                     axis([0 map_length 0 map_width]);
                     title('分析处理后目标实时运动信息');
-                    figure(1)
+                    figure(3)
                     plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
                     axis([0 map_length 0 map_width]);
                     hold on
@@ -219,7 +219,7 @@ for i = 1:len
                     end
                     axis([0 map_length 0 map_width]);
                     title('分析处理后目标实时运动信息');
-                    figure(1)
+                    figure(3)
                     plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
                     axis([0 map_length 0 map_width]);
                     hold on
