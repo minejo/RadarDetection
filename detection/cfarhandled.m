@@ -13,7 +13,7 @@ window_r = 1;
 hasObject = 0;
 position = [];
 pfa_d = 1e-6;
-pfa_v = 1e-7;
+pfa_v = 1e-6;
 K1=(pfa_d)^(-1/CFAR_N_l)-1; %Ðé¾¯ÃÅÏÞ
 K2=(pfa_v)^(-1/CFAR_N_w)-1;
 MaxPower = 0;
@@ -79,7 +79,7 @@ for p = 1: size(result, 1)
         if isTop == 1
             testLen = 20;
             for k = j - testLen: j + testLen
-                if(data(i, k) >= 0.45*data(i,j))
+                if( k > 0 && k <= N/2 && data(i, k) >= 0.45*data(i,j))
                     dis_w = k*2*Rmax/N;
                     vel = i*c/(T*M*2*f0);
                     objects = [objects;  dis_l dis_w vel];

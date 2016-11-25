@@ -20,7 +20,7 @@ for j = 1:num_w
         index_l = fix((beamPos_l - 1) * num_l + i);
         index_w = fix((beamPos_w - 1) * num_w + j);
         if(map(index_l, index_w) ~= 1000)%TODO:改用回波处理算法，目前为了测试
-            fprintf('理论点迹(%f,%f),速度为%f\n', index_l*map_l, index_w*map_w, map(index_l, index_w));
+            %fprintf('理论点迹(%f,%f),速度为%f\n', index_l*map_l, index_w*map_w, map(index_l, index_w));
             response = response + getdisg(index_w * map_w, (map(index_l, index_w)));
         end
     end

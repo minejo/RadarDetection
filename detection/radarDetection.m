@@ -59,9 +59,9 @@ for i = 1:len
     if track_flag == 0 %扫描模式
         [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 1);%判断当前波束是否有目标，如果有，记录下点迹
         if hasObject
-            for k = 1:size(objects_l,1)
-                fprintf('大波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
-            end
+%             for k = 1:size(objects_l,1)
+%                 fprintf('大波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
+%             end
             points = [points ;objects_l objects_w objects_v];
         end
         
@@ -180,9 +180,9 @@ for i = 1:len
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 1);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject == 1
                     fprintf('该大波束内发现%d个点迹\n', size(objects_l,1));
-                    for k = 1:size(objects_l,1)
-                        fprintf('大波束跟踪发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
-                    end
+%                     for k = 1:size(objects_l,1)
+%                         fprintf('大波束跟踪发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
+%                     end
                     fprintf('切换到小波束扫描\n')
                     track_flag = 2;
                     %points = [points ;objects_l objects_w objects_v];%大波束跟踪探测到的点用于辅助判断
@@ -313,9 +313,9 @@ for i = 1:len
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 2);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject
                     fprintf('大波束中的小波束发现%d个点迹\n', size(objects_l,1));
-                    for k = 1:size(objects_l,1)
-                        fprintf('小波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
-                    end
+%                     for k = 1:size(objects_l,1)
+%                         fprintf('小波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
+%                     end
                     points = [points ;objects_l objects_w objects_v];
                 end
             else
