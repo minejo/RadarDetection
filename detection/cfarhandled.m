@@ -88,7 +88,7 @@ for p = 1: size(result, 1)
         end
     end
 end
-unique(objects, 'rows');
+objects = unique(objects, 'rows');
 %figure(8);
 % if ~isempty(objects)
 %     plot(objects(:,2), objects(:,3), '*r');

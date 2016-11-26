@@ -15,13 +15,30 @@ else
     num_l = small_beam / map_l; %小波束内横向有多少个分辨单元
     num_w = small_beam / map_w; %小波束内纵向有多少个分辨单元
 end
+objects = [];
 for j = 1:num_w
     for i = 1:num_l
         index_l = fix((beamPos_l - 1) * num_l + i);
         index_w = fix((beamPos_w - 1) * num_w + j);
         if(map(index_l, index_w) ~= 1000)%TODO:改用回波处理算法，目前为了测试
             %fprintf('理论点迹(%f,%f),速度为%f\n', index_l*map_l, index_w*map_w, map(index_l, index_w));
-            response = response + getdisg(index_w * map_w, (map(index_l, index_w)));
+            %response = response + getdisg(index_w * map_w, (map(index_l, index_w)));
+            objects = [objects; index_w * map_w  map(index_l, index_w)];
+        end
+    end
+end
+RCS = 10;
+if ~isempty(objects)
+    allvel = objects(:,2);
+    allvel = unique(allvel, 'rows');
+    %objectcell = cell(1, length(allvel));
+    for i = 1:length(allvel)
+        L = objects(:,2) == allvel(i);
+        one = objects(L,:);
+        %构建sweling分布的rcs幅值
+        rcs = generateRcs(RCS, size(one, 1));
+        for j = 1:size(one, 1)
+            response = response + getdisg(one(j,1), one(j,2), rcs(j));
         end
     end
 end
