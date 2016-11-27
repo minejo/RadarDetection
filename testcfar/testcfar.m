@@ -5,7 +5,7 @@ load('mapdata.mat');
 objects = []; %单波束内所有物体
 window_r = 1;
 pfa_d = 1e-6;
-pfa_v = 5e-8;
+pfa_v = 1e-6;
 K1=(pfa_d)^(-1/CFAR_N_l)-1; %虚警门限
 K2=(pfa_v)^(-1/CFAR_N_w)-1;
 M = 46;
@@ -17,8 +17,10 @@ Rmax = 300;
 T = 8e-5;
 c = 3e8;
 f0 = 2e10;
-
-
+Fs = 7.5e6;
+MaxPower = 0;
+result = [];
+position = [];
 for i = 1:M/2
     for j = 1:N/2
         %速度维cfar
@@ -48,29 +50,42 @@ for i = 1:M/2
         end
         hasObject_l = cacfar(referWindow_l, value, K1);
         
-        if (hasObject_l * hasObject_w == 1)
+         if (hasObject_l * hasObject_w == 1)
             hasObject = 1;
-            %%%%%%%%%%%%%%%%判断该点是否是顶点%%%%%%%%%%%%%%%%%%%%
-            isTop=1;
-            if(i>1&&i<M&&j>1&&j<N/2)
-                isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
+            dis_w = j*2*Rmax/N;
+            vel = i*c/(T*M*2*f0);
+            if MaxPower < data(i, j)
+                MaxPower = data(i,j);
             end
-            if isTop == 1
-                %toTestPoints = data(i, j-20:j+20);
-                testLen = 20;
-                for k = j - 20: j + 20
-                    if(data(i, k) >= 0.45*value)
-                        dis = k*2*Rmax/N;
-                        vel = i*c/(T*M*2*f0);                        
-                       objects = [objects; dis vel]; 
-                    end
-                end
-                
+            if(dis_w < map_width)
+                result = [result; dis_w vel];
+                position = [position; i j];
             end
         end
     end
 end
-unique(objects, 'rows');
+for p = 1: size(result, 1)
+    i = position(p, 1);
+    j = position(p, 2);
+    if data(i,j) >=  0.5*MaxPower
+        %%%%%%%%%%%%%%%%判断该点是否是顶点%%%%%%%%%%%%%%%%%%%%
+        if(i>1&&i<M&&j>1&&j<N)
+            isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
+        end
+        if isTop == 1
+            testLen = 20;
+            for k = j - testLen: j + testLen
+                if( k > 0 && k <= N/2 && data(i, k) >= 0.45*data(i,j))
+                    dis_w = k*2*Rmax/N;
+                    vel = i*c/(T*M*2*f0);
+                    objects = [objects;  dis_w vel];
+                end
+            end
+        end
+    end
+end
+objects = unique(objects, 'rows');
+
 x_distance=(linspace(0,Fs,N));
 y_velocity=linspace(0, 1/T, M);
 meshx=x_distance(1:N/2)*c/(2*B/T);
