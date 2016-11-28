@@ -43,7 +43,7 @@ map=ones(map_length/map_l, map_width/map_w)*1000; %³õÊ¼mapÊý×é£¬³õÊ¼»¯Îª1000,Ò»¸
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %ÔË¶¯ÎïÌåÉè¶¨
-objectNum = 1;
+objectNum = 5;
 %R_init_l = []; %Ä¿±êµÄ³õÊ¼ºáÏò¾àÀë
 %R_init_w = []; %Ä¿±êµÄ³õÊ¼×ÝÏò¾àÀë
 %V_init_l = []; %Ä¿±êµÄ³õÊ¼ºáÏòËÙ¶È
@@ -74,7 +74,7 @@ trackObjectNum = 3; %¸ú×ÙÄ£Ê½ÏÂ¿ÉÒÔ¸ú×ÙµÄ×î´óÄ¿±êÊýÁ¿
 %Ä¿±êÔ¤¾¯Ïà¹Ø²ÎÊý
 continuousCount = 3; %Ä¿±êÁ¬Ðø¼¸¸öÖÜÆÚ¿¿½üÀ×´ï¾ÍÔ¤¾¯
 %Ð¡²¨ÊøÁ¬ÐøÉ¨ÃèÕû¸öÖÜÆÚµÄ×î´óÊý£¬Èç¹ûµ½´ï´ÎÊý£¬ÐèÒªÖØÐÂÓÃ´ó²¨ÊøÉ¨ÃèÕâ¸öÇøÓò£¬È·±£ÆäËûÇøÓò²»»á³öÏÖÂ©¾¯
-smallScanningNum = 4;
+smallScanningNum = fix(allow_T/(objectNum*(6+big_beam/small_beam*10)*T1));
 maxPointsNum = 1000; %Ò»¸öÖÜÆÚÉè¶¨µÄµã¼£ÊýÁ¿ÉÏÏÞ£¬Ì½²âµ½µÄµã¼£³¬¹ýÕâ¸öÉÏÏÞÖ±½ÓÔ¤¾¯£¬ºÜÓÐ¿ÉÄÜÖ±½Ó·¢ÉúÁËÄàÊ¯Á÷
 maxObjectSize = 10;%µã»÷¾ÛºÏºóÈç¹ûÓÐÎïÌåÌå»ý´óÓÚÕâ¸öÉÏÏÞ£¬¿ÉÖ±½ÓÔ¤¾¯
 minObjectSize = 1;%Ð¡ÓÚÕâ¸ö½çÏÞµÄÎïÌå¿ÉÈÏÎªÃ»ÓÐÍþÐ²°É

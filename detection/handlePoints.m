@@ -12,9 +12,9 @@ pointsnum = size(points, 1); %所有点迹的个数
 
 %开始点迹凝聚
 if type == 1
-    [class, type] = dbscan(points, minPts, sqrt(([distanceWDoor (big_beam*0.8)  velocityDoor].^2) * parameterWeight'), parameterWeight);
+    [class, type] = dbscan(points, minPts, sqrt(([distanceWDoor (big_beam*0.7)  velocityDoor].^2) * parameterWeight'), parameterWeight);
 else
-    [class, type] = dbscan(points, minPts,  sqrt(([distanceWDoor (small_beam*0.8)  velocityDoor].^2) * parameterWeight'), parameterWeight);
+    [class, type] = dbscan(points, minPts,  sqrt(([distanceWDoor (small_beam*0.7)  velocityDoor].^2) * parameterWeight'), parameterWeight);
 end
 clusternum = max(class); %聚合后簇的数量
 if clusternum ~= -1
