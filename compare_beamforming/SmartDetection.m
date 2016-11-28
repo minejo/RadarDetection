@@ -2,15 +2,12 @@
 %%% Author: Chao Li                 %%%
 %%% Email: jonathan.swjtu@gmail.com %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-close all;
-clear;
-clc;
+function [trackpath, prePath] = SmartDetection(config)
 %全局变量设置
 global T f0 B Fs N M RCS c alpha beta scfar_r
 global CFAR_N_l CFAR_N_w window_r KVI KMR pfa_d pfa_v
 global map VW RL RW map_l map_w map_length map_width R_pre_lmp R_pre_wmp objectNum big_beam small_beam deltaR deltaV points_num Rmax;
-load('simuConfig.mat');%导入雷达参数配置文件
+load(config);%导入雷达参数配置文件
 fprintf('加载参数完毕\n');
 Tb = map_length*map_width/(big_beam*big_beam)*T1; %大波束扫描完整个区域的时间
 t = 0:T1:time_num*Tb; %时间轴
@@ -54,7 +51,7 @@ for i = 1:len
     title('运动目标原始点迹信息');
     for index = 1:points_num
         if outOfRange(index) == 0
-            prePath{1,index} = [prePath{1,index} [R_pre_lmp(index)*map_l; R_pre_wmp(index)*map_w]]; %模拟的理论运动模型轨迹
+            prePath{1,index} = [prePath{1,index} [R_pre_lmp(index)*map_l; R_pre_wmp(index)*map_w; VW(index, i)]]; %模拟的理论运动模型轨迹
         end
     end
     if track_flag == 0 %扫描模式
@@ -114,23 +111,23 @@ for i = 1:len
                     integraV = mean(object{BigBeamScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                     fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
                     trackpath = [trackpath;integraDisL integraDisW]; %only for plot
-                    figure(2)
-                    if isWarning == 1
-                        plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
-                    else
-                        plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'b*');
-                    end
-                    axis([0 map_length 0 map_width]);
-                    title('分析处理后目标实时运动信息');
-                    figure(3)
-                    plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
-                    axis([0 map_length 0 map_width]);
-                    hold on
-                    title('分析处理后运动轨迹');
-                    for k = 1:effectiveNum
-                        fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
-                        plotObject(object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2),object{BigBeamScanningCount}(k,4)/2);
-                    end
+%                     figure(2)
+%                     if isWarning == 1
+%                         plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
+%                     else
+%                         plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'b*');
+%                     end
+%                     axis([0 map_length 0 map_width]);
+%                     title('分析处理后目标实时运动信息');
+%                     figure(3)
+%                     plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
+%                     axis([0 map_length 0 map_width]);
+%                     hold on
+%                     title('分析处理后运动轨迹');
+%                     for k = 1:effectiveNum
+%                         fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2), object{BigBeamScanningCount}(k,3),object{BigBeamScanningCount}(k,4));
+%                         plotObject(object{BigBeamScanningCount}(k,1), object{BigBeamScanningCount}(k,2),object{BigBeamScanningCount}(k,4)/2);
+%                     end
                     %pause(0.1);
                     if effectiveNum < trackObjectNum
                         fprintf('由于目标数量较少，切换到大波束跟踪模式\n');
@@ -181,7 +178,7 @@ for i = 1:len
                 BigBeamTrackingWindow(1, :) = [];
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 1);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject == 1
-                    fprintf('该大波束内发现%d个点迹\n', size(objects_l,1));
+                    %fprintf('该大波束内发现%d个点迹\n', size(objects_l,1));
 %                     for k = 1:size(objects_l,1)
 %                         fprintf('大波束跟踪发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
 %                     end
@@ -214,18 +211,18 @@ for i = 1:len
                          
                     end
                     trackingAllObject = [trackingAllObject trackingobject{smallScanningCount}];
-                    figure(2)
-                    if isWarning == 2
-                        plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), 'g*');
-                    else
-                        plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
-                    end
-                    axis([0 map_length 0 map_width]);
-                    title('分析处理后目标实时运动信息');
-                    figure(3)
-                    plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
-                    axis([0 map_length 0 map_width]);
-                    hold on
+%                     figure(2)
+%                     if isWarning == 2
+%                         plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), 'g*');
+%                     else
+%                         plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
+%                     end
+%                     axis([0 map_length 0 map_width]);
+%                     title('分析处理后目标实时运动信息');
+%                     figure(3)
+%                     plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), '*');
+%                     axis([0 map_length 0 map_width]);
+%                     hold on
                     
                     %得到物体数量，大小，得到整个探测区域的综合点信息
                     if ~isempty(trackingobject{smallScanningCount})
@@ -234,10 +231,10 @@ for i = 1:len
                         integraDisW = mean(trackingobject{smallScanningCount}(:,2));%整个周期内的所有目标的纵向距离最大值
                         integraV = mean(trackingobject{smallScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                         fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
-                        for k = 1:effectiveNum
-                            fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2), trackingobject{smallScanningCount}(k,3),trackingobject{smallScanningCount}(k,4));
-                            plotObject(trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2),trackingobject{smallScanningCount}(k,4)/2);
-                        end
+%                         for k = 1:effectiveNum
+%                             fprintf('第%d个威胁性目标位置(%f,%f),速度为%f\n，大小为%f\n',k, trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2), trackingobject{smallScanningCount}(k,3),trackingobject{smallScanningCount}(k,4));
+%                             plotObject(trackingobject{smallScanningCount}(k,1), trackingobject{smallScanningCount}(k,2),trackingobject{smallScanningCount}(k,4)/2);
+%                         end
                         trackpath = [trackpath;integraDisL integraDisW]; %only for plot
                         %pause(0.1);
                         %TODO：画图
@@ -316,7 +313,7 @@ for i = 1:len
                 SmallBeamTrackingWindow(1, :) = [];
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 2);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject
-                    fprintf('大波束中的小波束发现%d个点迹\n', size(objects_l,1));
+                    %fprintf('大波束中的小波束发现%d个点迹\n', size(objects_l,1));
 %                     for k = 1:size(objects_l,1)
 %                         fprintf('小波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
 %                     end

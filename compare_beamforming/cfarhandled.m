@@ -1,45 +1,45 @@
-close all;
-load('response.mat');
-CFAR_N_w=8; %速度维参考窗长度
-CFAR_N_l=16; %距离维参考窗长度
-objects = []; %单波束内所有物体
-window_r = 1;
-pfa_d = 1e-6;
-pfa_v = 1e-6;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Author: Chao Li                 %%%
+%%% Email: jonathan.swjtu@gmail.com %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function  [hasObject, objects] = cfarhandled(data, beamPos_l, beamPos_w, beam_type)
+%通过距离维与速度维各做一次cacfar，综合判断是否出现目标
+global big_beam small_beam Rmax T f0 c map_length map_width CFAR_N_w CFAR_N_l window_r pfa_d pfa_v
+objects = []; %单波束内所有物体,分为三列，分别为[横坐标 纵坐标 速度];
+%CFAR_N_w=8; %速度维参考窗长度
+%CFAR_N_l=16; %距离维参考窗长度
+%window_r = 1;
+hasObject = 0;
+position = [];
+%pfa_d = 1e-6;
+%pfa_v = 1e-6;
 K1=(pfa_d)^(-1/CFAR_N_l)-1; %虚警门限
 K2=(pfa_v)^(-1/CFAR_N_w)-1;
-M = 46;
-N = 2000;
-hasObject = 0;
-big_beam = 9;
-small_beam = 3;
-Rmax = 300;
-T = 8e-5;
-c = 3e8;
-f0 = 2e10;
-Fs = 7.5e6;
 MaxPower = 0;
 result = [];
-position = [];
-SimuTimes = 1e5;%蒙特卡洛次数
-SNR = 0:30;
-len = length(SNR);
-
-response = awgn(response, SNR);
-% %添加杂波信号
-% za=zeros(M,N);
-% for k=1:M
-%     za(k,:)=wbfb(1.5,2.2);
-% end
-% response = response + (za);
-%%%%%%%%%%对差频信号进行二维fft变换%%%%%%%%%
-data = after2fft(response); %二维变换后的矩阵
-data=abs(data);
-
-
-
+[M, N] = size(data);
+if beam_type == 1
+    start_dis = (beamPos_w - 1) * big_beam;
+    end_dis = beamPos_w * big_beam;
+else
+    start_dis = (beamPos_w - 1) * small_beam;
+    end_dis = beamPos_w * small_beam;
+end
+start_pos = start_dis * N / (2 * Rmax);
+end_pos = end_dis * N / (2 * Rmax);
+if start_pos > 2
+    start_pos = start_pos - 2;
+end
+if start_pos == 0
+    start_pos = 1;
+end
+if end_pos < N - 2
+    end_pos = end_pos + 2;
+end
 for i = 1:M/2
-    for j = 1:N/2
+    for j = start_pos: end_pos
+        %fprintf('理论距离%f, 速度%f\n', j*2*Rmax/N, i*c/(T*M*2*f0));
         %速度维cfar
         referWindow_w = [];
         value = data(i,j);
@@ -50,7 +50,7 @@ for i = 1:M/2
         else
             referWindow_w=data(i-CFAR_N_w/2-window_r:i-window_r-1,j)';
         end
-        hasObject_w = cacfar(referWindow_w, value,  K2);
+        hasObject_w = cacfar(referWindow_w, value, K2);
         
         %距离维cfar
         referWindow_l = [];
@@ -67,15 +67,21 @@ for i = 1:M/2
         end
         hasObject_l = cacfar(referWindow_l, value, K1);
         
+        
         if (hasObject_l * hasObject_w == 1)
             hasObject = 1;
+            if beam_type == 1
+                dis_l = (beamPos_l - 1)* big_beam + 0.5 * big_beam;
+            else
+                dis_l = (beamPos_l - 1)* small_beam + 0.5 * small_beam;
+            end
             dis_w = j*2*Rmax/N;
             vel = i*c/(T*M*2*f0);
             if MaxPower < data(i, j)
                 MaxPower = data(i,j);
             end
-            if(dis_w < map_width)
-                result = [result; dis_w vel];
+            if( dis_l < map_length && dis_w < map_width)
+                result = [result;  dis_l dis_w vel];
                 position = [position; i j];
             end
         end
@@ -86,6 +92,7 @@ for p = 1: size(result, 1)
     j = position(p, 2);
     if data(i,j) >=  0.5*MaxPower
         %%%%%%%%%%%%%%%%判断该点是否是顶点%%%%%%%%%%%%%%%%%%%%
+        isTop = 0;
         if(i>1&&i<M&&j>1&&j<N)
             isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
         end
@@ -94,26 +101,17 @@ for p = 1: size(result, 1)
             for k = j - testLen: j + testLen
                 if( k > 0 && k <= N/2 && data(i, k) >= 0.45*data(i,j))
                     dis_w = k*2*Rmax/N;
-                    vel = i*c/(T*M*2*f0);
-                    objects = [objects;  dis_w vel];
+                    vel = i*c/(T*M*2*f0)-1;
+                    objects = [objects;  dis_l dis_w vel];
                 end
             end
         end
     end
 end
 objects = unique(objects, 'rows');
-
-x_distance=(linspace(0,Fs,N));
-y_velocity=linspace(0, 1/T, M);
-meshx=x_distance(1:N/2)*c/(2*B/T);
-figure(1);
-contour(meshx,c*y_velocity/(2*f0),data(:,1:N/2));
-figure(3);
-mesh(meshx,c*y_velocity/(2*f0),data(:,1:N/2));
-title('差频信号二维频谱仿真图');
-xlabel('distance/m');
-ylabel('velocity/(m/s)');
-
-figure(2);
-plot(objects(:,1), objects(:,2), '*r');
-axis([0 300 0 90]);
+%figure(8);
+% if ~isempty(objects)
+%     plot(objects(:,2), objects(:,3), '*r');
+%     axis([0 300 0 90]);
+% end
+end

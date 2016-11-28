@@ -26,13 +26,14 @@ for i = 1:objectNum
    AL = randi([amin amax]); %目标的初始横向加速度
    AW = randi([amin amax]); %目标的初始纵向加速度
    objectSize = randi([2 9])*deltaR; %目标大小
-   objectSizeinfo(i, 1) = 2*objectSize;
+   objectSizeinfo(i, 1) = 2*objectSize
    [R_init_ls, R_init_ws] = getCircleRandomPoints(objectSize, RL, RW, deltaR); %同一个物体的所有距离信息，分为多行，每行分别为[L W]
    pointNum = size(R_init_ls, 1);%该目标的点迹数
    R_init_l = [R_init_l; R_init_ls];
    R_init_w = [R_init_w; R_init_ws];
    V_init_l = [V_init_l; ones(pointNum, 1)* VL];
    V_init_w = [V_init_w; ones(pointNum, 1)* VW];
+   fprintf('第%d目标初始化径向速度为%f\n',i, VW);
    A_init_l = [A_init_l; ones(pointNum, 1)* AL];
    A_init_w = [A_init_w; ones(pointNum, 1)* AW];
 end
