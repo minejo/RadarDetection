@@ -18,7 +18,7 @@ end
 for i=1:N
     fft2(:,i) = fft(fft1(:,i),M);
 end
-
+% 
 % x_distance=(linspace(0,Fs,N));
 % y_velocity=linspace(0, 1/T, M);
 % meshx=x_distance(1:N/2)*c/(2*B/T);
@@ -28,18 +28,18 @@ end
 % xlabel('distance/m');
 % ylabel('velocity/(m/s)');
 % figure;
-% subplot(211)
-% test=abs((fft1(1,:)));
+% subplot(2,1,1)
+% test=abs((fft1(4,:)));
 % plot(linspace(0,Fs,N)*c/(2*B/T),test);
-% title('理想回波信号的一维频谱仿真图');
+% title('理想回波差频信号的一维频谱仿真图');
 % xlabel('距离/m');
 % ylabel('幅度');
 % grid on;axis tight;
 % 
-% subplot(212)
-% plot(1:M,real(fft1(:,234)));
+% subplot(2,1,2)
+% plot(1:M,real(fft1(:,4)));
 % hold
-% plot(1:M,imag(fft1(:,234)),'r--');
+% plot(1:M,imag(fft1(:,4)),'r--');
 % title('一维处理结果的相位调制图');
 % xlabel('积累周期k');
 % ylabel('相位角度');

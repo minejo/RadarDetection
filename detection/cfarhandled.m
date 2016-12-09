@@ -12,8 +12,8 @@ objects = []; %单波束内所有物体,分为三列，分别为[横坐标 纵坐标 速度];
 %window_r = 1;
 hasObject = 0;
 position = [];
-pfa_d = 6e-5;
-pfa_v = 6e-5;
+pfa_d = 1e-5;
+pfa_v = 1e-4;
 K1=(pfa_d)^(-1/CFAR_N_l)-1; %虚警门限
 K2=(pfa_v)^(-1/CFAR_N_w)-1;
 MaxPower = 0;
@@ -90,21 +90,22 @@ end
 for p = 1: size(result, 1)
     i = position(p, 1);
     j = position(p, 2);
-    if data(i,j) >=  0.5*MaxPower
+    if data(i,j) >=  0.4*MaxPower
         %%%%%%%%%%%%%%%%判断该点是否是顶点%%%%%%%%%%%%%%%%%%%%
+        isTop = 0;
         if(i>1&&i<M&&j>1&&j<N)
             isTop= (data(i,j) > data(i+1,j)) && (data(i,j) > data(i-1,j)) && (data(i,j) > data(i,j-1)) && (data(i,j) > data(i,j+1));
         end
-        if isTop == 1
+       % if isTop == 1
             testLen = 20;
             for k = j - testLen: j + testLen
-                if( k > 0 && k <= N/2 && data(i, k) >= 0.45*data(i,j))
+                if( k > 0 && k <= N/2 && data(i, k) >= 0.4*data(i,j))
                     dis_w = k*2*Rmax/N;
                     vel = i*c/(T*M*2*f0)-1;
                     objects = [objects;  dis_l dis_w vel];
                 end
             end
-        end
+       % end
     end
 end
 objects = unique(objects, 'rows');

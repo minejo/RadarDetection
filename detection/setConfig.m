@@ -54,6 +54,8 @@ objectNum = 5;
 figure
 plot(R_init_l, R_init_w, '*');
 axis([0 map_length 0 map_width]);
+xlabel('横向距离/m');
+ylabel('纵向距离/m');
 %%%%%初始目标在map中的标示%%%%%
 points_num = size(R_init_l, 1); %所有点迹的数量
 for index = 1:points_num    
@@ -67,7 +69,7 @@ R_pre_wmp = fix(R_init_w/map_w); %对应前一时刻的纵向距离的map坐标
 distanceWDoor = deltaR; %纵向距离门设置为两倍的距离分辨率
 %distanceLDoor=2*small_beam; %横向距离门默认为小波束分辨率的两倍，当使用大波束扫描时应更改成大波束边长的两倍
 velocityDoor = 1; %速度门
-minPts = 4; %number of objects in a neighborhood of an object
+minPts = 3; %number of objects in a neighborhood of an object
 parameterWeight = [0.2 0.4 0.4];%计算欧几里得时的权重，分别对应[横向距离 纵向距离 纵向速度]
 %目标跟踪相关参数
 trackObjectNum = 3; %跟踪模式下可以跟踪的最大目标数量

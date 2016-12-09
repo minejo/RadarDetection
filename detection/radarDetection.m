@@ -44,6 +44,8 @@ isWarning = 0; %判断是否需要预警，1为大规模预警，2为小规模预警
 smallScanningCount = 1; %计算小波束扫描完整个区域的次数，大于smallScanningNum时则需要重置为大波束扫描
 BigBeamTrackingObject = []; %大波束跟踪窗口的目标队列
 SmallPoint = [];
+trackAllpath = [];
+dbscanSize = [];
 fprintf('开始大波束扫描.....................\n');
 trackpath = [];
 for i = 1:len
@@ -54,15 +56,15 @@ for i = 1:len
     title('运动目标原始点迹信息');
     for index = 1:points_num
         if outOfRange(index) == 0
-            prePath{1,index} = [prePath{1,index} [R_pre_lmp(index)*map_l; R_pre_wmp(index)*map_w]]; %模拟的理论运动模型轨迹
+            prePath{1,index} = [prePath{1,index} [R_pre_lmp(index)*map_l; R_pre_wmp(index)*map_w; VW(index, i)]]; %模拟的理论运动模型轨迹
         end
     end
     if track_flag == 0 %扫描模式
         [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 1);%判断当前波束是否有目标，如果有，记录下点迹
         if hasObject
-%             for k = 1:size(objects_l,1)
-%                 fprintf('大波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
-%             end
+            %             for k = 1:size(objects_l,1)
+            %                 fprintf('大波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
+            %             end
             points = [points ;objects_l objects_w objects_v];
         end
         
@@ -90,6 +92,7 @@ for i = 1:len
                     cludisw = objectCell{j}(:,2);%取簇中的纵向距离维
                     cluv = objectCell{j}(:,3);%去簇中的速度维
                     clustersize = max(cludisw) - min(cludisw);
+                    dbscanSize = [dbscanSize;i clustersize];
                     %将整个周期的分析出来的目标信息和大小信息放入ojbect矩阵
                     fprintf('点迹过滤，将大小很小的物体滤除，将速度为正的目标剔除\n');
                     if clustersize > minObjectSize && mean(cluv) > 0
@@ -102,7 +105,7 @@ for i = 1:len
                         else
                             object{BigBeamScanningCount} = [object{BigBeamScanningCount};mean(cludisl) mean(cludisw) mean(cluv) clustersize];
                         end
-                        trackpath = [trackpath; mean(cludisl) mean(cludisw)]; %only for plot
+                        trackpath = [trackpath; mean(cludisl) mean(cludisw) ]; %only for plot
                     end
                 end
                 %得到物体数量，大小，得到整个探测区域的综合点信息
@@ -114,6 +117,7 @@ for i = 1:len
                     integraV = mean(object{BigBeamScanningCount}(:,3));%整个周期内的所有目标的质心点速度
                     fprintf('有%d个威胁性目标出现，综合位置为(%f,%f),速度为%f\n',effectiveNum, integraDisL, integraDisW, integraV);
                     trackpath = [trackpath;integraDisL integraDisW]; %only for plot
+                    trackAllpath = [trackAllpath; object{BigBeamScanningCount}(:,1) object{BigBeamScanningCount}(:,2)];
                     figure(2)
                     if isWarning == 1
                         plot(object{BigBeamScanningCount}(:,1),object{BigBeamScanningCount}(:,2), 'r*');
@@ -182,9 +186,9 @@ for i = 1:len
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 1);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject == 1
                     fprintf('该大波束内发现%d个点迹\n', size(objects_l,1));
-%                     for k = 1:size(objects_l,1)
-%                         fprintf('大波束跟踪发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
-%                     end
+                    %                     for k = 1:size(objects_l,1)
+                    %                         fprintf('大波束跟踪发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
+                    %                     end
                     fprintf('切换到小波束扫描\n')
                     track_flag = 2;
                     %points = [points ;objects_l objects_w objects_v];%大波束跟踪探测到的点用于辅助判断
@@ -202,6 +206,7 @@ for i = 1:len
                         cludisw = objectCell{j}(:,2);%取簇中的纵向距离维
                         cluv = objectCell{j}(:,3);%去簇中的速度维
                         clustersize = max(cludisw) - min(cludisw);
+                        dbscanSize = [dbscanSize;i clustersize];
                         %将整个周期的分析出来的目标信息和大小信息放入ojbect矩阵
                         fprintf('点迹过滤，将大小很小的物体滤除，将速度为正的目标剔除\n');
                         if clustersize > 1 && mean(cluv) > 0
@@ -211,9 +216,10 @@ for i = 1:len
                                 trackingobject{smallScanningCount} = [trackingobject{smallScanningCount};mean(cludisl) mean(cludisw) mean(cluv) clustersize];
                             end
                         end
-                         
+                        
                     end
                     trackingAllObject = [trackingAllObject trackingobject{smallScanningCount}];
+                    trackAllpath = [trackAllpath; trackingAllObject{end}(:,1) trackingAllObject{end}(:,2)];
                     figure(2)
                     if isWarning == 2
                         plot(trackingAllObject{end}(:,1),trackingAllObject{end}(:,2), 'g*');
@@ -317,9 +323,9 @@ for i = 1:len
                 [hasObject, objects_l, objects_w, objects_v] = BeamFindObject(beamPos_l, beamPos_w, 2);%判断当前波束是否有目标，如果有，记录下点迹
                 if hasObject
                     fprintf('大波束中的小波束发现%d个点迹\n', size(objects_l,1));
-%                     for k = 1:size(objects_l,1)
-%                         fprintf('小波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
-%                     end
+                    %                     for k = 1:size(objects_l,1)
+                    %                         fprintf('小波束扫描发现目标,坐标(%f,%f)，速度%f\n',objects_l(k), objects_w(k), objects_v(k));
+                    %                     end
                     points = [points ;objects_l objects_w objects_v];
                 end
             else
@@ -330,10 +336,150 @@ for i = 1:len
         end
     end
 end
+
+%%
+%for paper plot
+
 %测试运动模型轨迹路径
 % figure
 % for index = 1:points_num
 %     plot(prePath{1,index}(1,:),prePath{1,index}(2,:),'*');
 %     hold on
 % end
+% figure(6)
+% plot(dbscanSize(:,1)*T1, dbscanSize(:,2),'*');
+% hold on;
+% plot((0:len)*T1, 4.2, '-');
+% axis([0 10 0 10]);
+% xlabel('时间/s');
+% ylabel('目标大小/m');
+% legend('使用dbscan聚合后大小', '理论大小');
+% title('DBSCAN点迹凝聚性能分析');
+% maxLen = 0;
+% points_num = size(prePath, 2);
+% for index = 1:99
+%     if size(prePath{index}, 2) > maxLen
+%         maxLen = size(prePath{index}, 2);
+%     end
+% end
+% theoryPoint = [];
+% for j = 1:maxLen
+%     points = [];
+%     for index = 1:99
+%         if size(prePath{index}, 2) >= j
+%             points = [points; prePath{index}(1,j) prePath{1,index}(2,j) prePath{1,index}(3,j)];
+%         end
+%     end
+%     if ~isempty(points)
+%         theoryPoint = [theoryPoint; mean(points(:,1)) mean(points(:,2))];
+%     end
+% end
+% figure(8)
+% plot(theoryPoint(:,1), theoryPoint(:,2),'-k');
+% hold on
+% 
+% maxLen = 0;
+% points_num = size(prePath, 2);
+% for index = 100:197
+%     if size(prePath{index}, 2) > maxLen
+%         maxLen = size(prePath{index}, 2);
+%     end
+% end
+% theoryPoint = [];
+% for j = 1:maxLen
+%     points = [];
+%     for index = 100:197
+%         if size(prePath{index}, 2) >= j
+%             points = [points; prePath{index}(1,j) prePath{1,index}(2,j) prePath{1,index}(3,j)];
+%         end
+%     end
+%     if ~isempty(points)
+%         theoryPoint = [theoryPoint; mean(points(:,1)) mean(points(:,2))];
+%     end
+% end
+% plot(trackAllpath(:,1), trackAllpath(:,2),'*');
+% hold on
+% plot(theoryPoint(:,1), theoryPoint(:,2),'-k');
+% 
+% maxLen = 0;
+% points_num = size(prePath, 2);
+% for index = 198:215
+%     if size(prePath{index}, 2) > maxLen
+%         maxLen = size(prePath{index}, 2);
+%     end
+% end
+% theoryPoint = [];
+% for j = 1:maxLen
+%     points = [];
+%     for index = 198:215
+%         if size(prePath{index}, 2) >= j
+%             points = [points; prePath{index}(1,j) prePath{1,index}(2,j) prePath{1,index}(3,j)];
+%         end
+%     end
+%     if ~isempty(points)
+%         theoryPoint = [theoryPoint; mean(points(:,1)) mean(points(:,2))];
+%     end
+% end
+% plot(theoryPoint(:,1), theoryPoint(:,2),'-k');
+% hold on
+% 
+% maxLen = 0;
+% points_num = size(prePath, 2);
+% for index = 216:247
+%     if size(prePath{index}, 2) > maxLen
+%         maxLen = size(prePath{index}, 2);
+%     end
+% end
+% theoryPoint = [];
+% for j = 1:maxLen
+%     points = [];
+%     for index = 216:247
+%         if size(prePath{index}, 2) >= j
+%             points = [points; prePath{index}(1,j) prePath{1,index}(2,j) prePath{1,index}(3,j)];
+%         end
+%     end
+%     if ~isempty(points)
+%         theoryPoint = [theoryPoint; mean(points(:,1)) mean(points(:,2))];
+%     end
+% end
+% plot(theoryPoint(:,1), theoryPoint(:,2),'-k');
+% hold on
+% 
+% maxLen = 0;
+% points_num = size(prePath, 2);
+% for index = 248:points_num
+%     if size(prePath{index}, 2) > maxLen
+%         maxLen = size(prePath{index}, 2);
+%     end
+% end
+% theoryPoint = [];
+% for j = 1:maxLen
+%     points = [];
+%     for index = 248:points_num
+%         if size(prePath{index}, 2) >= j
+%             points = [points; prePath{index}(1,j) prePath{1,index}(2,j) prePath{1,index}(3,j)];
+%         end
+%     end
+%     if ~isempty(points)
+%         theoryPoint = [theoryPoint; mean(points(:,1)) mean(points(:,2))];
+%     end
+% end
+% plot(theoryPoint(:,1), theoryPoint(:,2),'-k');
+% hold on
+% 
+% xlabel('探测区域横向坐标/m');
+% ylabel('探测区域纵向坐标/m');
+% axis([0 90 0 60]);
+% legend('理论运动轨迹', '智能波束扫描');
+
+% plot(trackpath(:,1), trackpath(:,2), '*');
+% figure(2)
+% hold on
+% point1l = mean(RL(1:24,:));
+% point2l = mean(RL(25:end,:));
+% point1w = mean(RW(1:24,:));
+% point2w = mean(RW(25:end,:));
+% plot(point1l, point1w, '-');
+% hold on;
+% plot(point2l, point2w, '-');
 
